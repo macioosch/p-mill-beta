@@ -1,13 +1,14 @@
-#include <QCoreApplication>
 #include <iostream>
-
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    cout << "Hello, World!\n";
 
-    cout << "Hello, world!";
+    int i;
+    for(i=0; i<10; i++) {
+        cout << "2i = " << 2*i << endl;
+    }
 
-    return a.exec();
+    return 0;
 }
