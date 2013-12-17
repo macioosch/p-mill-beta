@@ -1,33 +1,15 @@
 #include <iostream>
-#include <boost/program_options.hpp>
+#include "parse_cli_opts.h"
 
-namespace po = boost::program_options;
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    // Declare the supported options.
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("help", "produce help message")
-        ("compression", po::value<int>(), "set compression level")
-    ;
+    bool return_status = 0;
+    parameters params;
+    return_status += parse_cli_opts(argc, argv, params);
 
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+    cout << "Accessing params from main loop: " << params.type << endl;
 
-    if (vm.count("help")) {
-        cout << desc << "\n";
-        return 1;
-    }
-
-    if (vm.count("compression")) {
-        cout << "Compression level was set to "
-             << vm["compression"].as<int>() << ".\n";
-    } else {
-        cout << "Compression level was not set.\n";
-    }
-
-    return 0;
+    return return_status;
 }
