@@ -12,10 +12,12 @@ CONFIG -= qt
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    parse_cli_opts.cpp
+    parse_cli_opts.cpp \
+    ball_mill.cpp
 
 LIBS += -lboost_program_options
 
 HEADERS += \
     parse_cli_opts.h \
-    parameters.h
+    parameters.h \
+    ball_mill.h
