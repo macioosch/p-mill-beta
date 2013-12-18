@@ -16,6 +16,8 @@ struct parameters {
     double E, e, G, mu, nu, rho;
     // geometric parameters of the balls
     double rb;
+    // other parameters
+    double tmax, dt;
 };
 
 #endif // MAIN_H
