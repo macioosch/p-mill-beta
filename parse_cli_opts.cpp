@@ -35,13 +35,13 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
         ("g", po::value<double>(&(params.g)),
             "gravitational acceleration [m s^-2]")
         ("vx0", po::value<double>(&(params.vx0)),
-            "ball's initial horizontal velocity")
+            "ball's initial horizontal velocity [m s^-1]")
         ("vy0", po::value<double>(&(params.vy0)),
-            "ball's initial vertical velocity")
+            "ball's initial vertical velocity [m s^-1]")
         ("w0", po::value<double>(&(params.w0)),
-            "ball's initial angular velocity")
+            "ball's initial angular velocity [s^-1]")
         ("y0", po::value<double>(&(params.y0)),
-            "ball's initial distance from the plane")
+            "ball's initial distance from the plane [m]")
     ;
 
     po::options_description opt_all("Allowed options");
@@ -57,7 +57,7 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     }
 
     if (vm.count("type")) {
-        cout << "Type was set to " << params.type << ".\n";
+        cout << "Simulation type set to " << params.type << ".\n";
     } else {
         cerr << "Please set simulation type!\n";
         return 1;
