@@ -1,6 +1,6 @@
 #include <iostream>
-#include "parse_cli_opts.h"
 #include "ball_mill.h"
+#include "parse_cli_opts.h"
 
 using namespace std;
 
@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
     } else if (3 == params.type) {
         // type_3_init(params, b);
     }
+
+    simulate(params, b);
 
     return return_status;
 }

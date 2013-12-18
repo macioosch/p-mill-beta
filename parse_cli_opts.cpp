@@ -1,7 +1,3 @@
-/* A placeholder.
- * TODO:
- * - function should return a struct of meaningful options.
- */
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "parse_cli_opts.h"
