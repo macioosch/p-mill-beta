@@ -32,6 +32,8 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     po::options_description opt_type1(
                 "Options for type 1 simulation, a ball over a plane");
     opt_type1.add_options()
+        ("g", po::value<double>(&(params.g)),
+            "gravitational acceleration [m s^-2]")
         ("vx0", po::value<double>(&(params.vx0)),
             "ball's initial horizontal velocity")
         ("vy0", po::value<double>(&(params.vy0)),

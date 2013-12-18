@@ -10,16 +10,16 @@ int main(int argc, char *argv[])
     parameters params;
     return_status += parse_cli_opts(argc, argv, params);
 
-    ball b;
+    vector<ball> b;
 
-    b.a = 0.0;
-    b.w = 0.0;
-    b.x.resize(2);
-    b.x(0) = 0.0;
-    b.x(1) = params.y0;
-    b.v.resize(2);
-    b.v(0) = params.vx0;
-    b.v(1) = params.vy0;
+    if (1 == params.type) {
+        type_1_init(params, b);
+        cout << "x: " << b[0].x << ", v: " << b[0].v << endl;
+    } else if (2 == params.type) {
+        // type_2_init(params, b);
+    } else if (3 == params.type) {
+        // type_3_init(params, b);
+    }
 
     return return_status;
 }

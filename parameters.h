@@ -10,7 +10,7 @@ struct parameters {
     int type;
 
     // for type 1: explicit setting of the sole ball's kinetic params
-    double y0, vx0, vy0, w0;
+    double y0, vx0, vy0, w0, g;
 
     // material parameters of the balls
     double E, e, G, mu, nu, rho;
