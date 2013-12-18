@@ -12,12 +12,13 @@ struct parameters {
     // for type 1: explicit setting of the sole ball's kinetic params
     double y0, vx0, vy0, w0, g;
 
-    // material parameters of the balls
-    double E, e, G, mu, nu, rho;
-    // geometric parameters of the balls
-    double rb;
+    // parameters of the balls set by the user
+    double E, e, G, mu, nu, rho, rb;
     // other parameters
     double tmax, dt;
+
+    // parameters computed by the program
+    double Er, Gr, m, mr, rr, beta;
 };
 
 #endif // MAIN_H

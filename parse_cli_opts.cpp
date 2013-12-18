@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 #include <boost/program_options.hpp>
 #include "parse_cli_opts.h"
 
@@ -60,6 +61,14 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
         cerr << "Please set simulation type!\n";
         return 1;
     }
+
+    // secondary parameters
+    params.Er = params.E / (2.0*(1.0-pow(params.nu,2)));
+    params.Gr = params.G / (2.0*(2.0-params.nu));
+    params.m = params.rho * (4.0/3.0) * M_PI * pow(params.rb, 3);
+    params.mr = params.m / 2.0;
+    params.rr = params.rb / 2.0;
+    params.beta = -pow(1.0 + pow(M_PI/std::log(params.e), 2), -0.5);
 
     return 0;
 }
