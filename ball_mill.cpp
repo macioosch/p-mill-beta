@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "ball_mill.h"
 
 void type_1_init(parameters &params, std::vector<ball> &b)
@@ -18,14 +19,14 @@ void type_1_init(parameters &params, std::vector<ball> &b)
 blas::vector<double> a_total(const parameters &params, const ball &b,
                              const double &t)
 {
-    static blas::vector<double> a (2);
-    a[0] = 0.0;
-    if (b.x[1] > 0.0)
-        a[1] = -params.g;
+    static blas::vector<double> force (2);
+    force[0] = 0.0;
+    if (b.x[1] >= 0.0)
+        force[1] = -params.g;
     else
-        a[1] = -params.g + (4./3.) * params.Er * sqrt(params.rr)
+        force[1] = -params.g + (4./3.) * params.Er * sqrt(params.rr)
                 * pow(-b.x[1], 1.5);
-    return a;
+    return force / params.m;
 }
 
 void simulate(const parameters &params, std::vector<ball> &b)
@@ -56,7 +57,10 @@ void simulate(const parameters &params, std::vector<ball> &b)
         b[0].x = b[0].x + (params.dt/6.0)*(v1 + 2*v2 + 2*v3 + v4);
         b[0].v = b[0].v + (params.dt/6.0)*(a1 + 2*a2 + 2*a3 + a4);
 
-        if (i%(steps/100) == 0)
-            std::cout << "x: " << b[0].x << ", v: " << b[0].v << std::endl;
+        if (i % (steps/100) == 0)
+            std::cout << std::scientific << std::setprecision(6)
+                      << "t: " << params.dt*(i+1)
+                      << ", x: " << b[0].x
+                      << ", v: " << b[0].v << std::endl;
     }
 }
