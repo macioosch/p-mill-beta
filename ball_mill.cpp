@@ -23,7 +23,9 @@ blas::vector<double> a_total(const parameters &params, const ball &b,
     force[0] = 0.0;
     force[1] = -params.m * params.g;
     if (b.x[1] < 0.0)
-        force[1] += (4./3.) * params.Er * sqrt(params.rr) * pow(-b.x[1], 1.5);
+        force[1] += (4/3.) * params.Er * sqrt(params.rr) * pow(-b.x[1], 1.5)
+                + 2*params.beta * sqrt((5/3.)*params.mr*params.Er)
+                * pow(params.rr*(-b.x[1]), 0.25) * b.v[1];
     return force / params.m;
 }
 
