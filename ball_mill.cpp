@@ -59,9 +59,10 @@ void simulate(const parameters &params, std::vector<ball> &b)
         b[0].v = b[0].v + (params.dt/6.0)*(a1 + 2*a2 + 2*a3 + a4);
 
         if (i % output_interval == 0)
-            std::cout << std::scientific << std::setprecision(6)
-                      << "t: " << params.dt*(i+1)
-                      << ", x: " << b[0].x
-                      << ", v: " << b[0].v << std::endl;
+            std::cout << std::setprecision(14)
+                      << params.dt*(i+1)
+                      << "\t" << b[0].x[1]
+                      << "\t" << b[0].v[1]
+                      << std::endl;
     }
 }
