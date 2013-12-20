@@ -21,11 +21,9 @@ blas::vector<double> a_total(const parameters &params, const ball &b,
 {
     static blas::vector<double> force (2);
     force[0] = 0.0;
-    if (b.x[1] >= 0.0)
-        force[1] = -params.g;
-    else
-        force[1] = -params.g + (4./3.) * params.Er * sqrt(params.rr)
-                * pow(-b.x[1], 1.5);
+    force[1] = -params.m * params.g;
+    if (b.x[1] < 0.0)
+        force[1] += (4./3.) * params.Er * sqrt(params.rr) * pow(-b.x[1], 1.5);
     return force / params.m;
 }
 
@@ -55,8 +53,8 @@ void simulate(const parameters &params, std::vector<ball> &b)
         v4 = b[0].v = v1 + a3*params.dt;
         a4 = a_total(params, b[0], params.dt*(i+1));
 
-        b[0].x = b[0].x + (params.dt/6.0)*(v1 + 2*v2 + 2*v3 + v4);
-        b[0].v = b[0].v + (params.dt/6.0)*(a1 + 2*a2 + 2*a3 + a4);
+        b[0].x = x1 + (params.dt/6.0)*(v1 + 2*v2 + 2*v3 + v4);
+        b[0].v = v1 + (params.dt/6.0)*(a1 + 2*a2 + 2*a3 + a4);
 
         if (i % output_interval == 0)
             std::cout << std::setprecision(14)

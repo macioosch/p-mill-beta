@@ -23,4 +23,5 @@ eigen3/
 
 # other:
 *.swp
-output/
+*.csv
+*.pdf
