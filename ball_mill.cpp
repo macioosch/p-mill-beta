@@ -32,6 +32,7 @@ blas::vector<double> a_total(const parameters &params, const ball &b,
 void simulate(const parameters &params, std::vector<ball> &b)
 {
     const int steps = std::ceil(params.tmax / params.dt);
+    const int output_interval = steps / params.output_lines;
     blas::vector<double> x1(2), v1(2), a1(2),
                          x2(2), v2(2), a2(2),
                          x3(2), v3(2), a3(2),
@@ -57,7 +58,7 @@ void simulate(const parameters &params, std::vector<ball> &b)
         b[0].x = b[0].x + (params.dt/6.0)*(v1 + 2*v2 + 2*v3 + v4);
         b[0].v = b[0].v + (params.dt/6.0)*(a1 + 2*a2 + 2*a3 + a4);
 
-        if (i % (steps/100) == 0)
+        if (i % output_interval == 0)
             std::cout << std::scientific << std::setprecision(6)
                       << "t: " << params.dt*(i+1)
                       << ", x: " << b[0].x

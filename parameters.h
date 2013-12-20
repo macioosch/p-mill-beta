@@ -16,6 +16,7 @@ struct parameters {
     double E, e, G, mu, nu, rho, rb;
     // other parameters
     double tmax, dt;
+    int output_lines;
 
     // parameters computed by the program
     double Er, Gr, m, mr, rr, beta;
