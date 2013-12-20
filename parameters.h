@@ -15,8 +15,7 @@ struct parameters {
     // parameters of the balls set by the user
     double E, e, G, mu, nu, rho, rb;
     // other parameters
-    double tmax, dt;
-    int output_lines;
+    double tmax, dt, output_lines;
 
     // parameters computed by the program
     double Er, Gr, m, mr, rr, beta;

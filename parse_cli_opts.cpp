@@ -12,7 +12,7 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     opt_general.add_options()
         ("dt", po::value<double>(&(params.dt)), "time step [s]")
         ("help", "produce this help message")
-        ("output_lines", po::value<int>(&(params.output_lines)),
+        ("output_lines", po::value<double>(&(params.output_lines)),
             "number of output lines, every tmax/output_lines s")
         ("tmax", po::value<double>(&(params.tmax)), "total simulation time [s]")
         ("type", po::value<int>(&(params.type)), "simulation type")
