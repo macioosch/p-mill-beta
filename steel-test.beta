@@ -2,13 +2,12 @@
 ./p-mill-beta          \
     --type  1          \
     --dt    1e-6       \
-    --tmax  6e-1       \
+    --tmax  1e-0       \
     --output_lines 1e5 \
     --e     0.8        \
     --E     2e8        \
     --G     7.93e7     \
     --mu    2e-3       \
-    --nu    0.3        \
     --rho   7.75e3     \
     --rb    1e-2       \
     --g     9.80665    \
@@ -18,4 +17,5 @@
     --y0    2e-2       \
     > output/steel-test.csv
 
+./find-peaks.py > output/peaks.csv
 ./plot-vertical.gnuplot

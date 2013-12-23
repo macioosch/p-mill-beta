@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         // type_3_init(params, b);
     }
 
-    simulate(params, b);
+    simulate_1(params, b);
 
     return return_status;
 }

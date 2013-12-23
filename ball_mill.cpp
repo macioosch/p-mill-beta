@@ -16,7 +16,7 @@ void type_1_init(parameters &params, std::vector<ball> &b)
     b[0].v[1] = params.vy0;
 }
 
-blas::vector<double> a_total(const parameters &params, const ball &b,
+blas::vector<double> a_total_1(const parameters &params, const ball &b,
                              const double &t)
 {
     static blas::vector<double> force (2);
@@ -29,7 +29,7 @@ blas::vector<double> a_total(const parameters &params, const ball &b,
     return force / params.m;
 }
 
-void simulate(const parameters &params, std::vector<ball> &b)
+void simulate_1(const parameters &params, std::vector<ball> &b)
 {
     const int steps = std::ceil(params.tmax / params.dt);
     const int output_interval = steps / params.output_lines;
@@ -41,19 +41,19 @@ void simulate(const parameters &params, std::vector<ball> &b)
     for (int i=0; i<steps; ++i) {
         x1 = b[0].x;
         v1 = b[0].v;
-        a1 = a_total(params, b[0], params.dt*i);
+        a1 = a_total_1(params, b[0], params.dt*i);
 
         x2 = b[0].x = x1 + v1*0.5*params.dt;
         v2 = b[0].v = v1 + a1*0.5*params.dt;
-        a2 = a_total(params, b[0], params.dt*(i+0.5));
+        a2 = a_total_1(params, b[0], params.dt*(i+0.5));
 
         x3 = b[0].x = x1 + v2*0.5*params.dt;
         v3 = b[0].v = v1 + a2*0.5*params.dt;
-        a3 = a_total(params, b[0], params.dt*(i+0.5));
+        a3 = a_total_1(params, b[0], params.dt*(i+0.5));
 
         x4 = b[0].x = x1 + v3*params.dt;
         v4 = b[0].v = v1 + a3*params.dt;
-        a4 = a_total(params, b[0], params.dt*(i+1));
+        a4 = a_total_1(params, b[0], params.dt*(i+1));
 
         b[0].x = x1 + (params.dt/6.0)*(v1 + 2*v2 + 2*v3 + v4);
         b[0].v = v1 + (params.dt/6.0)*(a1 + 2*a2 + 2*a3 + a4);

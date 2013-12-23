@@ -25,7 +25,6 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
         ("G", po::value<double>(&(params.G)), "balls' shear modulus [Pa]")
         ("mu", po::value<double>(&(params.mu)),
             "balls' rolling friction coefficient")
-        ("nu", po::value<double>(&(params.nu)), "balls' Poisson's ratio")
         ("rho", po::value<double>(&(params.rho)), "balls' density [kg m^-3]")
         ("rb", po::value<double>(&(params.rb)), "balls' radius [m]")
     ;
@@ -65,6 +64,7 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     }
 
     // secondary parameters
+    params.nu = 0.5 * params.E / params.G - 1.0;
     params.Er = params.E / (2.0*(1.0-pow(params.nu,2)));
     params.Gr = params.G / (2.0*(2.0-params.nu));
     params.m = params.rho * (4.0/3.0) * M_PI * pow(params.rb, 3);

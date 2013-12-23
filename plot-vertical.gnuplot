@@ -27,10 +27,12 @@ set ylabel "E/E_0 - 1"
 plot file u 1:(energy($2, $3)/energy(h0, 0) - 1) w l
 
 set ylabel "E_i [J]"
-#set yrange [0:2]
-#plot peaks u 1:($2/(E0*restitution**(2*$1))) w l
+set logscale y
+#set yrange [-1:1]
+#set xrange [0:10]
+#plot peaks u 1:(-$2/(E0*restitution**(2*$1)) + 1) w p
+set xrange [0:20]
 #set yrange [1e-9:1e-2]
 set key bottom left
-set logscale y
 plot peaks u 1:(E0*restitution**(2*$1)) w l t "theory",\
      peaks u 1:2 w l t "simulation"
