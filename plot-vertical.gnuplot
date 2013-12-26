@@ -1,14 +1,18 @@
 #!/usr/bin/env gnuplot
 set terminal pdf enhanced size 8,5
-file = "output/steel-test.csv"
-peaks = "output/peaks.csv"
-set output "plots/steel-test.pdf"
+file = "output/steel-1-vertical.csv"
+peaks = "output/steel-1-vertical-peaks.csv"
+set output "plots/steel-1-vertical.pdf"
 
-m = 0.03246312408709453
 g = 9.80665
 h0 = 0.02
-Er = 1.098901098901099e8
 radius = 0.01
+rho = 7.75e3
+E = 2e8
+G = 7.93e7
+nu = 0.5*E/G - 1.0
+Er = E / (2*(1-nu**2))
+m = (4/3.) * pi * radius**3 * rho
 energy(h, v) = 0.5*m*v**2 + m*g*h + (h > 0 ? 0 : (8.0/15)*Er*sqrt(radius)*(-h)**2.5)
 h_static = -(9/16.)**(1/3.0) * ( g*m/(Er*sqrt(radius)) )**(2/3.0)
 E0 = energy(h0 - h_static, 0)

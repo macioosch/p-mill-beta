@@ -1,0 +1,21 @@
+#/usr/bin/env bash
+./p-mill-beta          \
+    --type  1          \
+    --dt    1e-6       \
+    --tmax  1e-0       \
+    --output_lines 1e5 \
+    --e     1.0        \
+    --E     2e8        \
+    --G     7.93e7     \
+    --mu    2e-3       \
+    --rho   7.75e3     \
+    --rb    1e-2       \
+    --g     9.80665    \
+    --vx0   0          \
+    --vy0   0          \
+    --w0    0          \
+    --y0    2e-2       \
+    > output/steel-1-vertical.csv
+
+./find-peaks.py > output/steel-1-vertical-peaks.csv
+./plot-vertical.gnuplot
