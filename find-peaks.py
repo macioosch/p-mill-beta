@@ -17,11 +17,11 @@ with open('output/steel-test.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter='\t')
     found = 0
     for row in spamreader:
-        if len(row) == 3:
-            new_v = float(row[2])
+        if len(row) == 7:
+            new_v = float(row[4])
             if old_v >= 0 and new_v < 0:
                 v = new_v
-                h = float(row[1]) - h_static
+                h = float(row[2]) - h_static
                 E = energy(h, v)
                 print(found, E, sep='\t')
                 found += 1

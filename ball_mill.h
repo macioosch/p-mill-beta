@@ -7,9 +7,14 @@
 
 namespace blas = boost::numeric::ublas;
 
+struct collision {
+    blas::vector<double> n, x0;
+};
+
 struct ball {
     blas::vector<double> x, v;
     double a, w;
+    collision* wall_collision;
 };
 
 void type_1_init(parameters &params, std::vector<ball> &b);

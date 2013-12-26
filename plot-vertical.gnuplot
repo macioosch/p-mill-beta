@@ -20,11 +20,11 @@ unset key
 #set xrange [0.063:0.066]
 
 set ylabel "y [m]"
-plot file u 1:2 w l
-set ylabel "y - h_s [m]"
 plot file u 1:3 w l
+set ylabel "y - h_s [m]"
+plot file u 1:5 w l
 set ylabel "E/E_0 - 1"
-plot file u 1:(energy($2, $3)/energy(h0, 0) - 1) w l
+plot file u 1:(energy($3, $5)/energy(h0, 0) - 1) w l
 
 set ylabel "E_i [J]"
 set logscale y
