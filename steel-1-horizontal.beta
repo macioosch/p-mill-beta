@@ -8,14 +8,14 @@
     --E     2e8        \
     --G     8e10       \
     --mu_r  0.01       \
-    --mu_s  0.20       \
+    --mu_s  0.90       \
     --rho   7.8e3      \
     --rb    1e-2       \
     --g     9.80665    \
-    --vx0   1.0        \
+    --vx0   0.0        \
     --vy0   0.0        \
-    --w0    0.0        \
-    --y0    2e-2       \
+    --w0    1e4        \
+    --y0    0.0        \
     > output/steel-1-horizontal.csv
 
 gnuplot -e "basename = 'steel-1-horizontal'" plot-track.gnuplot

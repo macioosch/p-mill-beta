@@ -12,14 +12,14 @@ int main(int argc, char *argv[])
 
     vector<ball> b;
 
-    if (1 == params.type) {
+    if (1 == params.type)
         type_1_init(params, b);
-        cout << "x: " << b[0].x << ", v: " << b[0].v << endl;
-    } else if (2 == params.type) {
+    else if (2 == params.type)
+        true;
         // type_2_init(params, b);
-    } else if (3 == params.type) {
+    else if (3 == params.type)
+        true;
         // type_3_init(params, b);
-    }
 
     simulate_1(params, b);
 

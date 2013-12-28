@@ -57,7 +57,7 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     }
 
     if (vm.count("type")) {
-        cout << "Simulation type set to " << params.type << ".\n";
+        cout << "# Simulation type set to " << params.type << ".\n";
     } else {
         cerr << "Please set simulation type!\n";
         return 1;

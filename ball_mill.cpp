@@ -24,18 +24,18 @@ blas::vector<double> a_total_1(const parameters &params, const ball &b)
     static blas::vector<double> force (2);
     static double delta_n, delta_t, fmax;
     force[0] = 0.0;
-    force[1] = -params.m * params.g;
+    force[1] = 0.0;
     if (b.x[1] < 0.0) {
         // the ball is colliding with the wall
         delta_n = -b.x[1];
         if (NULL != b.wall_collision)
-            delta_t = b.x[0] + params.rb*std::sin(b.a-b.wall_collision->a0)
+            delta_t = b.x[0] + params.rb*sin(b.a-b.wall_collision->a0)
                     - b.wall_collision->point[0];
         else
             delta_t = 0.0;
         force[0] += 4*params.beta * sqrt(5/3.*params.m*params.Gr)
-                * pow(params.rb*delta_n, 0.25) * (b.v[0] + b.w*(params.rb-delta_n))
-                - 8.0 * params.Gr * sqrt(params.rb * delta_n) * delta_t;
+                * pow(params.rb*delta_n, 0.25) * (b.v[0] + b.w*(params.rb-delta_n));
+                //- 8.0 * params.Gr * sqrt(params.rb * delta_n) * delta_t;
         force[1] += (4/3.) * params.Er * sqrt(params.rb) * pow(delta_n, 1.5)
                 + 2*params.beta * sqrt(5/3.*params.m*params.Er)
                 * pow(params.rb*delta_n, 0.25) * b.v[1];
@@ -43,6 +43,7 @@ blas::vector<double> a_total_1(const parameters &params, const ball &b)
         if (fabs(force[0]) > fmax)
             force[0] = fmax * force[0] / fabs(force[0]);
     }
+    force[1] += -params.m * params.g;
     return force / params.m;
 }
 
@@ -119,7 +120,7 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
             // a collision with wall just started
             b[0].wall_collision = new collision_with_wall;
             b[0].wall_collision->point = b[0].x;
-            b[0].wall_collision->point[1] = 0.0;
+            b[0].wall_collision->point[1] = -params.rb;
             b[0].wall_collision->r0 =
                     b[0].wall_collision->point - b[0].x;
             b[0].wall_collision->a0 = b[0].a;
