@@ -23,8 +23,8 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
         ("e", po::value<double>(&(params.e)), "balls' restitution coefficient")
         ("E", po::value<double>(&(params.E)), "balls' Young's modulus [Pa]")
         ("G", po::value<double>(&(params.G)), "balls' shear modulus [Pa]")
-        ("mu", po::value<double>(&(params.mu)),
-            "balls' rolling friction coefficient")
+        ("mu_r", po::value<double>(&(params.mu_r)), "balls' rolling friction coefficient")
+        ("mu_s", po::value<double>(&(params.mu_s)), "balls' static friction coefficient")
         ("rho", po::value<double>(&(params.rho)), "balls' density [kg m^-3]")
         ("rb", po::value<double>(&(params.rb)), "balls' radius [m]")
     ;

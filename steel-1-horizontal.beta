@@ -4,16 +4,17 @@
     --dt    1e-5       \
     --tmax  1e-0       \
     --output_lines 1e4 \
-    --e     0.8        \
+    --e     0.7        \
     --E     2e8        \
-    --G     7.93e7     \
-    --mu    2e-3       \
-    --rho   7.75e3     \
+    --G     8e10       \
+    --mu_r  0.01       \
+    --mu_s  0.20       \
+    --rho   7.8e3      \
     --rb    1e-2       \
     --g     9.80665    \
     --vx0   1.0        \
-    --vy0   0          \
-    --w0    0          \
+    --vy0   0.0        \
+    --w0    0.0        \
     --y0    2e-2       \
     > output/steel-1-horizontal.csv
 

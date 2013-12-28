@@ -13,7 +13,7 @@ struct parameters {
     double y0, vx0, vy0, w0, g;
 
     // parameters of the balls set by the user
-    double E, e, G, mu, nu, rho, rb;
+    double E, e, G, mu_r, mu_s, nu, rho, rb;
     // other parameters
     double tmax, dt, output_lines;
 
