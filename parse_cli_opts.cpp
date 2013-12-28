@@ -70,7 +70,7 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     params.m = params.rho * (4.0/3.0) * M_PI * pow(params.rb, 3);
     params.mr = params.m / 2.0;
     params.rr = params.rb / 2.0;
-    params.beta = -pow(1.0 + pow(M_PI/std::log(params.e), 2), -0.5);
+    params.beta = -pow(1.0 + pow(M_PI/log(params.e), 2), -0.5);
 
     return 0;
 }
