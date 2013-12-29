@@ -22,23 +22,26 @@ void type_1_init(parameters &params, std::vector<ball> &b)
 blas::vector<double> a_total_1(const parameters &params, const ball &b)
 {
     static blas::vector<double> force (2);
-    static double delta_n, delta_t, fmax;
+    static double delta_n, /*delta_t,*/ fmax;
+    static const double
+            fnc_const = 4/3.*params.Er * sqrt(params.rb),
+            fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 0.25),
+            //ftc_const = -8*params.Gr * sqrt(params.rb),
+            ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 0.25);
     force[0] = 0.0;
     force[1] = 0.0;
     if (b.x[1] < 0.0) {
         // the ball is colliding with the wall
         delta_n = -b.x[1];
-        if (NULL != b.wall_collision)
-            delta_t = b.x[0] + params.rb*sin(b.a-b.wall_collision->a0)
-                    - b.wall_collision->point[0];
-        else
-            delta_t = 0.0;
-        force[0] += 4*params.beta * sqrt(5/3.*params.m*params.Gr)
-                * pow(params.rb*delta_n, 0.25) * (b.v[0] + b.w*(params.rb-delta_n));
-                //- 8.0 * params.Gr * sqrt(params.rb * delta_n) * delta_t;
-        force[1] += (4/3.) * params.Er * sqrt(params.rb) * pow(delta_n, 1.5)
-                + 2*params.beta * sqrt(5/3.*params.m*params.Er)
-                * pow(params.rb*delta_n, 0.25) * b.v[1];
+        //if (NULL != b.wall_collision)
+        //    delta_t = b.x[0] + params.rb*sin(b.a-b.wall_collision->a0)
+        //            - b.wall_collision->point[0];
+        //else
+        //    delta_t = 0.0;
+        force[0] += ftd_const * pow(delta_n, 0.25) * (b.v[0] + b.w*params.rb);
+                //+ ftc_const * sqrt(delta_n) * delta_t;
+        force[1] += fnc_const * pow(delta_n, 1.5)
+                + fnd_const * pow(delta_n, 0.25) * b.v[1];
         fmax = fabs(force[1] * params.mu_s);
         if (fabs(force[0]) > fmax)
             force[0] = fmax * force[0] / fabs(force[0]);
@@ -56,9 +59,9 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                          x3(2), dx3(2), d2x3(2),
                          x4(2), dx4(2), d2x4(2);
     double a1, da1, d2a1,
-           a2, da2, d2a2,
-           a3, da3, d2a3,
-           a4, da4, d2a4;
+               da2, d2a2,
+               da3, d2a3,
+               da4, d2a4;
 
     for (int i=0; i<steps; ++i) {
         // RK4 INTEGRATION
@@ -75,7 +78,7 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                     / (2/5. * params.m * pow(params.rb, 2));
 
         x2 = b[0].x = x1 + dx1*0.5*params.dt;
-        a2 = b[0].a = a1 + da1*0.5*params.dt;
+        b[0].a = a1 + da1*0.5*params.dt;
         dx2 = b[0].v = dx1 + d2x1*0.5*params.dt;
         da2 = b[0].w = da1 + d2a1*0.5*params.dt;
         d2x2 = a_total_1(params, b[0]);//, params.dt*(i+0.5));
@@ -87,7 +90,7 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                     / (2/5. * params.m * pow(params.rb, 2));
 
         x3 = b[0].x = x1 + dx2*0.5*params.dt;
-        a3 = b[0].a = a1 + da2*0.5*params.dt;
+        b[0].a = a1 + da2*0.5*params.dt;
         dx3 = b[0].v = dx1 + d2x2*0.5*params.dt;
         da3 = b[0].w = da1 + d2a2*0.5*params.dt;
         d2x3 = a_total_1(params, b[0]);//, params.dt*(i+0.5));
@@ -99,7 +102,7 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                     / (2/5. * params.m * pow(params.rb, 2));
 
         x4 = b[0].x = x1 + dx3*params.dt;
-        a4 = b[0].a = a1 + da3*params.dt;
+        b[0].a = a1 + da3*params.dt;
         dx4 = b[0].v = dx1 + d2x3*params.dt;
         da4 = b[0].w = da1 + d2a3*params.dt;
         d2x4 = a_total_1(params, b[0]);//, params.dt*(i+1));
