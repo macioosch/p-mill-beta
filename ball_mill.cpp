@@ -50,6 +50,24 @@ blas::vector<double> a_total_1(const parameters &params, const ball &b)
     return force / params.m;
 }
 
+double fsign(const double &x)
+{
+    if (x > 0.0)
+        return 1.0;
+    else if (x < 0.0)
+        return -1.0;
+    return 0.0;
+}
+
+double angular_acceleration(const parameters &params, const double &a_tangential, const double &w,
+                            const double &delta_n)
+{
+    static const double torque_const = 4/3.*params.Er * sqrt(params.rb);
+    static const double moment_inertia = 2/5.*params.m * pow(params.rb, 2);
+    return (params.m * a_tangential - fabs(torque_const*pow(delta_n, 1.5)) * params.mu_r * fsign(w))
+            * (params.rb-delta_n) / moment_inertia;
+}
+
 void simulate_1(const parameters &params, std::vector<ball> &b)
 {
     const int steps = std::ceil(params.tmax / params.dt);
@@ -70,48 +88,32 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
         dx1 = b[0].v;
         da1 = b[0].w;
         d2x1 = a_total_1(params, b[0]);//, params.dt*i);
-        if (x1[1] >= 0.0)
-            d2a1 = 0.0;
-        else
-            d2a1 = (params.m*d2x1[0]*(params.rb+x1[1])
-                    - fabs((4/3.)*params.Er*sqrt(params.rb)*pow(-x1[1], 1.5))*params.mu_r*params.rb*da1)
-                    / (2/5. * params.m * pow(params.rb, 2));
+        d2a1 = 0.0;
+        if (x1[1] < 0.0) d2a1 = angular_acceleration(params, d2x1[0], da1, -x1[1]);
 
         x2 = b[0].x = x1 + dx1*0.5*params.dt;
         b[0].a = a1 + da1*0.5*params.dt;
         dx2 = b[0].v = dx1 + d2x1*0.5*params.dt;
         da2 = b[0].w = da1 + d2a1*0.5*params.dt;
         d2x2 = a_total_1(params, b[0]);//, params.dt*(i+0.5));
-        if (x2[1] >= 0.0)
-            d2a2 = 0.0;
-        else
-            d2a2 = (params.m*d2x2[0]*(params.rb+x2[1])
-                    - fabs((4/3.)*params.Er*sqrt(params.rb)*pow(-x2[1], 1.5))*params.mu_r*params.rb*da2)
-                    / (2/5. * params.m * pow(params.rb, 2));
+        d2a2 = 0.0;
+        if (x2[1] < 0.0) d2a2 = angular_acceleration(params, d2x2[0], da2, -x2[1]);
 
         x3 = b[0].x = x1 + dx2*0.5*params.dt;
         b[0].a = a1 + da2*0.5*params.dt;
         dx3 = b[0].v = dx1 + d2x2*0.5*params.dt;
         da3 = b[0].w = da1 + d2a2*0.5*params.dt;
         d2x3 = a_total_1(params, b[0]);//, params.dt*(i+0.5));
-        if (x3[1] >= 0.0)
-            d2a3 = 0.0;
-        else
-            d2a3 = (params.m*d2x3[0]*(params.rb+x3[1])
-                    - fabs((4/3.)*params.Er*sqrt(params.rb)*pow(-x3[1], 1.5))*params.mu_r*params.rb*da3)
-                    / (2/5. * params.m * pow(params.rb, 2));
+        d2a3 = 0.0;
+        if (x3[1] < 0.0) d2a3 = angular_acceleration(params, d2x3[0], da3, -x3[1]);
 
         x4 = b[0].x = x1 + dx3*params.dt;
         b[0].a = a1 + da3*params.dt;
         dx4 = b[0].v = dx1 + d2x3*params.dt;
         da4 = b[0].w = da1 + d2a3*params.dt;
         d2x4 = a_total_1(params, b[0]);//, params.dt*(i+1));
-        if (x4[1] >= 0.0)
-            d2a4 = 0.0;
-        else
-            d2a4 = (params.m*d2x4[0]*(params.rb+x4[1])
-                    - fabs((4/3.)*params.Er*sqrt(params.rb)*pow(-x4[1], 1.5))*params.mu_r*params.rb*da4)
-                    / (2/5. * params.m * pow(params.rb, 2));
+        d2a4 = 0.0;
+        if (x4[1] < 0.0) d2a4 = angular_acceleration(params, d2x4[0], da4, -x4[1]);
 
         b[0].x = x1 + (params.dt/6.0)*(dx1 + 2*dx2 + 2*dx3 + dx4);
         b[0].a = a1 + (params.dt/6.0)*(da1 + 2*da2 + 2*da3 + da4);
