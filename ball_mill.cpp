@@ -25,9 +25,9 @@ blas::vector<double> a_total_1(const parameters &params, const ball &b)
     static double delta_n, /*delta_t,*/ fmax;
     static const double
             fnc_const = 4/3.*params.Er * sqrt(params.rb),
-            fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 0.25),
+            fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 1/4.),
             //ftc_const = -8*params.Gr * sqrt(params.rb),
-            ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 0.25);
+            ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.);
     force[0] = 0.0;
     force[1] = 0.0;
     if (b.x[1] < 0.0) {
@@ -38,10 +38,10 @@ blas::vector<double> a_total_1(const parameters &params, const ball &b)
         //            - b.wall_collision->point[0];
         //else
         //    delta_t = 0.0;
-        force[0] += ftd_const * pow(delta_n, 0.25) * (b.v[0] + b.w*params.rb);
+        force[0] += ftd_const * pow(delta_n, 1/4.) * (b.v[0] + b.w*params.rb);
                 //+ ftc_const * sqrt(delta_n) * delta_t;
-        force[1] += fnc_const * pow(delta_n, 1.5)
-                + fnd_const * pow(delta_n, 0.25) * b.v[1];
+        force[1] += fnc_const * pow(delta_n, 3/2.)
+                + fnd_const * pow(delta_n, 1/4.) * b.v[1];
         fmax = fabs(force[1] * params.mu_s);
         if (fabs(force[0]) > fmax)
             force[0] = fmax * force[0] / fabs(force[0]);
@@ -64,14 +64,14 @@ double angular_acceleration(const parameters &params, const double &a_tangential
 {
     static const double torque_const = 4/3.*params.Er * sqrt(params.rb);
     static const double moment_inertia = 2/5.*params.m * pow(params.rb, 2);
-    return (params.m * a_tangential - fabs(torque_const*pow(delta_n, 1.5)) * params.mu_r * fsign(w))
+    return (params.m * a_tangential - fabs(torque_const*pow(delta_n, 3/2.)) * params.mu_r * fsign(w))
             * (params.rb-delta_n) / moment_inertia;
 }
 
 void simulate_1(const parameters &params, std::vector<ball> &b)
 {
     const int steps = std::ceil(params.tmax / params.dt);
-    const int output_interval = steps / params.output_lines;
+    int output_interval;
     blas::vector<double> x1(2), dx1(2), d2x1(2),
                          x2(2), dx2(2), d2x2(2),
                          x3(2), dx3(2), d2x3(2),
@@ -80,6 +80,11 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                da2, d2a2,
                da3, d2a3,
                da4, d2a4;
+
+    if (steps > params.output_lines)
+        output_interval = steps / params.output_lines;
+    else
+        output_interval = 1;
 
     for (int i=0; i<steps; ++i) {
         // RK4 INTEGRATION
