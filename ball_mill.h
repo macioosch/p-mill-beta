@@ -7,16 +7,10 @@
 
 namespace blas = boost::numeric::ublas;
 
-struct collision_with_wall {
-    // collision in "point", r0 = point - b.x, a0 = b.a
-    blas::vector<double> r0, point;
-    double a0;
-};
-
 struct ball {
     blas::vector<double> x, v;
     double a, w;
-    collision_with_wall* wall_collision;
+    double *wall_delta_t;
 };
 
 void type_1_init(parameters &params, std::vector<ball> &b);
