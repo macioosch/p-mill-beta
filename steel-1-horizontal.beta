@@ -2,20 +2,20 @@
 ./p-mill-beta          \
     --type  1          \
     --dt    1e-5       \
-    --tmax  1e-0       \
+    --tmax  1e+0       \
     --output_lines 1e4 \
     --e     0.7        \
     --E     2e11       \
     --G     8e10       \
     --mu_r  0.01       \
-    --mu_s  0.90       \
+    --mu_s  0.20       \
     --rho   7.8e3      \
     --rb    1e-2       \
     --g     9.80665    \
-    --vx0   1.0        \
+    --vx0   0.1        \
     --vy0   0.0        \
-    --w0    2e3        \
-    --y0    0.1        \
+    --w0    3e2        \
+    --y0    0.0        \
     > output/steel-1-horizontal.csv
 
-#gnuplot -e "basename = 'steel-1-horizontal'" plot-track.gnuplot
+./plot-horizontal.gnuplot

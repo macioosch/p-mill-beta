@@ -16,7 +16,8 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from sys import argv
 
-step = 20
+step = 10
+delta_a = -np.pi/2
 
 t = []
 x = []
@@ -36,7 +37,7 @@ with open(argv[1], 'rb') as csvfile:
             rows += 1
 
 # A circle
-circle_r = 0.005
+circle_r = 0.01
 circle_t = np.linspace(0, 2*np.pi, 32)
 circle_x = circle_r * np.cos(circle_t)
 circle_y = circle_r * np.sin(circle_t)
@@ -56,10 +57,14 @@ view_limit = max(view_width, view_height)
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
         xlim=(min_x, min_x + view_limit), ylim=(min_y, min_y + view_limit))
-ax.plot(x - circle_r*np.sin(a), y + circle_r*np.cos(a), "#aaaaaa")
+ax.plot(x + circle_r*np.cos(a + delta_a), y + circle_r*np.sin(a + delta_a), "#aaaaaa")
 ax.plot(x, y, "#666666", lw=2)
 line, = ax.plot([], [], lw=2)
 time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes)
+
+ax.set_xlabel("x [cm]")
+ax.set_ylabel("y [cm]")
+indicator_length = max(circle_r, 0.04*view_limit)
 
 # initialization function: plot the background of each frame
 def init():
@@ -69,9 +74,10 @@ def init():
 
 # animation function.  This is called sequentially
 def animate(i):
-    data_x = np.append(circle_x + x[i], [None, x[i], x[i] - 0.04*view_limit*np.sin(a[i])])
+    data_x = np.append(circle_x + x[i],
+            [None, x[i], x[i] + indicator_length*np.cos(a[i] + delta_a)])
     data_y = np.append(circle_y + y[i],
-            [None, y[i], y[i] + 0.04*view_limit*np.cos(a[i])])
+            [None, y[i], y[i] + indicator_length*np.sin(a[i] + delta_a)])
     line.set_data(data_x, data_y)
     time_text.set_text('time = {:.3f} s'.format(t[i]))
     pbar.update(i+1)
