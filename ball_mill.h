@@ -1,14 +1,12 @@
 #ifndef BALL_MILL_H
 #define BALL_MILL_H
 
-#include <boost/numeric/ublas/io.hpp>
-#include <boost/numeric/ublas/vector.hpp>
+#include <eigen3/Eigen/Core>
+#include <vector>
 #include "parse_cli_opts.h"
 
-namespace blas = boost::numeric::ublas;
-
 struct ball {
-    blas::vector<double> x, v;
+    Eigen::Vector2d x, v;
     double a, w;
     double *wall_delta_t;
 };

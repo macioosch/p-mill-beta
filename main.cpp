@@ -1,8 +1,7 @@
 #include <iostream>
+#include <vector>
 #include "ball_mill.h"
 #include "parse_cli_opts.h"
-
-using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -10,7 +9,7 @@ int main(int argc, char *argv[])
     parameters params;
     return_status += parse_cli_opts(argc, argv, params);
 
-    vector<ball> b;
+    std::vector<ball> b;
 
     if (1 == params.type) {
         type_1_init(params, b);

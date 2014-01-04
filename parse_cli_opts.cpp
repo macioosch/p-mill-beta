@@ -3,7 +3,6 @@
 #include <boost/program_options.hpp>
 #include "parse_cli_opts.h"
 
-using namespace std;
 namespace po = boost::program_options;
 
 int parse_cli_opts(int argc, char *argv[], parameters &params) {
@@ -52,14 +51,14 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     po::notify(vm);
 
     if (vm.count("help")) {
-        cout << opt_all << "\n";
+        std::cout << opt_all << "\n";
         return 1;
     }
 
     if (vm.count("type")) {
-        cout << "# Simulation type set to " << params.type << ".\n";
+        std::cout << "# Simulation type set to " << params.type << ".\n";
     } else {
-        cerr << "Please set simulation type!\n";
+        std::cerr << "Please set simulation type!\n";
         return 1;
     }
 

@@ -1,13 +1,12 @@
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <math.h>
+#include <vector>
 #include "ball_mill.h"
 
 void type_1_init(parameters &params, std::vector<ball> &b)
 {
     b.resize(1);
-    b[0].x.resize(2);
-    b[0].v.resize(2);
 
     b[0].a = 0.0;
     b[0].w = params.w0;
@@ -19,9 +18,9 @@ void type_1_init(parameters &params, std::vector<ball> &b)
     b[0].wall_delta_t = NULL;
 }
 
-blas::vector<double> a_total_1(const parameters &params, const ball &b)
+Eigen::Vector2d a_total_1(const parameters &params, const ball &b)
 {
-    static blas::vector<double> force (2);
+    static Eigen::Vector2d force (2);
     static double delta_n, delta_t, fmax;
     static const double
             fnc_const = 4/3.*params.Er * sqrt(params.rb),
@@ -70,14 +69,14 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
 {
     const int steps = std::ceil(params.tmax / params.dt);
     int output_interval;
-    blas::vector<double> x1(2), dx1(2), d2x1(2),
-                         x2(2), dx2(2), d2x2(2),
-                         x3(2), dx3(2), d2x3(2),
-                         x4(2), dx4(2), d2x4(2), ac;
+    Eigen::Vector2d x1(2), dx1(2), d2x1(2),
+                    x2(2), dx2(2), d2x2(2),
+                    x3(2), dx3(2), d2x3(2),
+                    x4(2), dx4(2), d2x4(2), ac;
     double a1, da1, d2a1,
                da2, d2a2,
                da3, d2a3,
-               da4, d2a4, delta_t_0;
+               da4, delta_t_0;
     bool reset_delta_t;
 
     if (steps > params.output_lines)
@@ -128,8 +127,8 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
             b[0].wall_delta_t[0] = delta_t_0 + dx3[0]*params.dt
                     + tan(da3*params.dt) * (params.rb+x4[1]);
         d2x4 = a_total_1(params, b[0]);//, params.dt*(i+1));
-        d2a4 = 0.0;
-        if (x4[1] < 0.0) d2a4 = angular_acceleration(params, d2x4[0], da4, -x4[1]);
+        //d2a4 = 0.0;
+        //if (x4[1] < 0.0) d2a4 = angular_acceleration(params, d2x4[0], da4, -x4[1]);
 
         ac = d2x1 + 2*d2x2 + 2*d2x3 + d2x4;
 
