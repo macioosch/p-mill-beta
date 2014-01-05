@@ -1,0 +1,19 @@
+#/usr/bin/env bash
+./p-mill-beta          \
+    --type  2          \
+    --dt    1e-6       \
+    --tmax  1e-3       \
+    --output_lines 1e2 \
+    --e     0.7        \
+    --E     2e11       \
+    --G     8e10       \
+    --mu_r  0.01       \
+    --mu_s  0.20       \
+    --rho   7.8e3      \
+    --rb    1e-2       \
+    --vx0   0.1        \
+    --x0    1e-5       \
+    --y0    0.0        \
+    --w0    0.0        \
+    --w1    0.0        \
+    > output/steel-2.csv

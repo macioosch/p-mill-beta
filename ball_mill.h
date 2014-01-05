@@ -12,6 +12,8 @@ struct ball {
 };
 
 void type_1_init(parameters &params, std::vector<ball> &b);
+void type_2_init(parameters &params, std::vector<ball> &b);
 void simulate_1(const parameters &params, std::vector<ball> &b);
+void simulate_2(const parameters &params, std::vector<ball> &b);
 
 #endif // BALL_MILL_H

@@ -9,8 +9,11 @@ struct parameters {
      */
     int type;
 
-    // for type 1: explicit setting of the sole ball's kinetic params
+    // for type 1 & 2: explicit setting of the sole ball's kinetic params
     double y0, vx0, vy0, w0, g;
+
+    // additionally for type 2, params of ball 2:
+    double w1, x0;
 
     // parameters of the balls set by the user
     double E, e, G, mu_r, mu_s, nu, rho, rb;

@@ -43,8 +43,17 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
             "ball's initial distance from the plane [m]")
     ;
 
+    po::options_description opt_type2(
+                "Options for type 2 simulation, two balls");
+    opt_type2.add_options()
+        ("w1", po::value<double>(&(params.w1)),
+            "2nd ball's initial angular velocity [s^-1]")
+        ("x0", po::value<double>(&(params.x0)),
+            "1st ball's initial distance from the 2nd ball [m]")
+    ;
+
     po::options_description opt_all("Allowed options");
-    opt_all.add(opt_general).add(opt_balls).add(opt_type1);
+    opt_all.add(opt_general).add(opt_balls).add(opt_type1).add(opt_type2);
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, opt_all), vm);
@@ -70,6 +79,11 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     params.mr = params.m / 2.0;
     params.rr = params.rb / 2.0;
     params.beta = -pow(1.0 + pow(M_PI/log(params.e), 2), -0.5);
+
+    if (1 == params.type)
+        std::cout << "# t\tx\ty\tvx\tvy\ta\tw\n";
+    else if (2 == params.type)
+        std::cout << "# t\tx0\ty0\tvx0\tvy0\ta0\tw0\tx1\ty1\tvx1\tvy1\ta1\tw1\n";
 
     return 0;
 }
