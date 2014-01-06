@@ -4,7 +4,7 @@
     --dt    1e-6       \
     --tmax  4e-1       \
     --output_lines 1e3 \
-    --e     0.7        \
+    --e     0.01        \
     --E     2e11       \
     --G     8e10       \
     --mu_r  0.01       \
@@ -13,9 +13,10 @@
     --rb    1e-2       \
     --vx0   0.1        \
     --x0    0.01       \
-    --y0    0.01       \
-    --w0    0.0        \
-    --w1    0.0        \
+    --y0    0.0        \
+    --w0    0e2        \
+    --w1    1e2        \
     > output/steel-2.csv
 
-./plot-2.gnuplot
+#./plot-2.gnuplot
+./animate-2.py output/steel-2.csv
