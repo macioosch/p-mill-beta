@@ -214,7 +214,7 @@ Eigen::Matrix2d a_total_2(const parameters &params, std::vector<ball> &b,
             fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 1/4.),
             ftc_const = -8*params.Gr * sqrt(params.rb),
             ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.);
-    cross_matrix << 0, -1, 1, 0;
+    cross_matrix << 0, 1, -1, 0;
 
     force[0] = force[1] = 0.0;
     r01 = b[1].x - b[0].x;
