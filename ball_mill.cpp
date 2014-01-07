@@ -197,6 +197,11 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
     }
 }
 
+double cross2d(const Eigen::Vector2d &v1, const Eigen::Vector2d &v2)
+{
+    return v1[0]*v2[1] - v1[1]*v2[0];
+}
+
 Eigen::Matrix2d a_total_2(const parameters &params, std::vector<ball> &b,
                           Eigen::Vector2d *delta_t_given)
 {
@@ -230,10 +235,12 @@ Eigen::Matrix2d a_total_2(const parameters &params, std::vector<ball> &b,
         else
             t_dir << -n_dir[1], n_dir[0];
         t_dir.normalize();
+
         force_n = (fnc_const * pow(delta_n, 3/2.)
                 + fnd_const * pow(delta_n, 1/4.) * v01.dot(n_dir)) * n_dir;
         force_t = (ftc_const * sqrt(delta_n) * delta_t.norm()
-            + ftd_const * pow(delta_n, 1/4.) * v01.dot(t_dir)) * t_dir;
+                + ftd_const * pow(delta_n, 1/4.) * v01.dot(t_dir)) * t_dir;
+
         fmax = force_n.norm() * params.mu_s;
         if (force_t.norm() <= fmax)
             force = force_n + force_t;
@@ -246,23 +253,19 @@ Eigen::Matrix2d a_total_2(const parameters &params, std::vector<ball> &b,
     return acceleration_matrix;
 }
 
-
 Eigen::Vector2d angular_acceleration_2(
         const parameters &params, const ball &b1, const ball &b2,
         const Eigen::Vector2d &acceleration)
 {
-    static const double torque_const = 4/3.*params.Er * sqrt(params.rb);
     static const double moment_inertia = 2/5.*params.m * pow(params.rb, 2);
-    static Eigen::Vector2d aa, n_dir, t_dir;
-    static double delta_n, a_tangential, torque_var;
-    delta_n = 2*params.rb - (b2.x - b1.x).norm();
+    static Eigen::Vector2d aa, n_dir, r1;
+    static double torque_var;
     n_dir = (b2.x - b1.x).normalized();
-    t_dir << -n_dir[1], n_dir[0];
-    a_tangential = (acceleration - acceleration.dot(n_dir)*n_dir).dot(t_dir);
-    torque_var = fabs(torque_const*pow(delta_n, 3/2.)) * params.mu_r;
-    aa << params.m * a_tangential - torque_var * fsign(b1.w),
-          params.m * (-a_tangential) - torque_var * fsign(b2.w);
-    aa *= (params.rb - delta_n/2) / moment_inertia;
+    r1 = (b2.x - b1.x)/2.0;
+    torque_var = -fabs(acceleration.dot(n_dir)) * params.m * params.mu_r * r1.norm();
+    aa << cross2d(r1, params.m * acceleration) + torque_var * fsign(b1.w),
+          cross2d(r1, params.m * acceleration) + torque_var * fsign(b2.w);
+    aa /= moment_inertia;
     return aa;
 }
 

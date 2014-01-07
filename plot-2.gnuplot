@@ -13,8 +13,9 @@ energy(w, vx, vy) = (ball_m*(vx**2+vy**2) + ball_I*w**2)/2
 e2(w1, vx1, vy1, w2, vx2, vy2) = energy(w1, vx1, vy1) + energy(w2, vx2, vy2)
 
 v0 = 0.1
-e0 = energy(0, v0, 0)
-eCM0 = e2(0, 0.5*v0, 0, 0, -0.5*v0, 0)
+w0 = 1e2
+e0 = energy(w0, v0, 0)
+eCM0 = e2(w0, 0.5*v0, 0, 0, -0.5*v0, 0)
 
 xCM0 = 0.005
 yCM0 = 0.005
