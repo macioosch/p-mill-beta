@@ -4,6 +4,20 @@
 #include <vector>
 #include "ball_mill.h"
 
+double fsign(const double &x)
+{
+    if (x > 0.0)
+        return 1.0;
+    else if (x < 0.0)
+        return -1.0;
+    return 0.0;
+}
+
+double cross2d(const Eigen::Vector2d &v1, const Eigen::Vector2d &v2)
+{
+    return v1[0]*v2[1] - v1[1]*v2[0];
+}
+
 void type_1_init(parameters &params, std::vector<ball> &b)
 {
     b.resize(1);
@@ -65,15 +79,6 @@ Eigen::Vector2d a_total_1(const parameters &params, const ball &b)
     }
     force[1] += -params.m * params.g;
     return force / params.m;
-}
-
-double fsign(const double &x)
-{
-    if (x > 0.0)
-        return 1.0;
-    else if (x < 0.0)
-        return -1.0;
-    return 0.0;
 }
 
 double angular_acceleration(const parameters &params, const double &a_tangential,
@@ -195,11 +200,6 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
             b[0].wall_delta_t[0] = delta_t_0 + params.dt/6.0*(dx1 + 2*dx2 + 2*dx3 + dx4)[0]
                     + tan(params.dt/6.0*(da1 + 2*da2 + 2*da3 + da4)) * (params.rb+b[0].x[1]);
     }
-}
-
-double cross2d(const Eigen::Vector2d &v1, const Eigen::Vector2d &v2)
-{
-    return v1[0]*v2[1] - v1[1]*v2[0];
 }
 
 Eigen::Matrix2d a_total_2(const parameters &params, std::vector<ball> &b,
