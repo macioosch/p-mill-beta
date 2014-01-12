@@ -28,13 +28,13 @@ with open(argv[1], 'rb') as csvfile:
     csvreader = csv.reader(csvfile, delimiter='\t')
     rows = 0
     for row in csvreader:
-        if len(row) == 7:
+        if not row[0].startswith("#"):
+            rows += 1
             if rows % step == 0:
                 t.append(float(row[0]))
                 x.append(float(row[1]))
                 y.append(float(row[2]))
                 a.append(float(row[5]))
-            rows += 1
 
 # A circle
 circle_r = 0.01

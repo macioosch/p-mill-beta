@@ -52,7 +52,7 @@ void type_2_init(parameters &params, std::vector<ball> &b)
     b[1].wall_delta_t = NULL;
 }
 
-Eigen::Vector2d a_total_1(const parameters &params, const ball &b)
+Eigen::Vector2d a_total_1(const parameters &params, const ball &b, bool &reset_delta_t)
 {
     static Eigen::Vector2d force;
     static double delta_n, delta_t, fmax;
@@ -61,27 +61,40 @@ Eigen::Vector2d a_total_1(const parameters &params, const ball &b)
             fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 1/4.),
             ftc_const = -8*params.Gr * sqrt(params.rb),
             ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.);
+
     force[0] = 0.0;
     force[1] = 0.0;
+
     if (b.x[1] < 0.0) {
         // the ball is colliding with the wall
         delta_n = -b.x[1];
         delta_t = 0.0;
-        if (NULL != b.wall_delta_t)
-            delta_t = b.wall_delta_t[0];
-        force[0] += ftd_const * pow(delta_n, 1/4.) * (b.v[0] + b.w*params.rb)
-                + ftc_const * sqrt(delta_n) * delta_t;
+
+        // the normal force
         force[1] += fnc_const * pow(delta_n, 3/2.)
                 + fnd_const * pow(delta_n, 1/4.) * b.v[1];
+
+        // tangential contact force
+        if (NULL != b.wall_delta_t)
+            delta_t = b.wall_delta_t[0];
+        force[0] += ftc_const * sqrt(delta_n) * delta_t;
         fmax = fabs(force[1] * params.mu_s);
-        if (fabs(force[0]) > fmax)
+        if (fabs(force[0]) > fmax) {
             force[0] = fmax * force[0] / fabs(force[0]);
+            reset_delta_t  = true;
+        }
+
+        //tangential damping force
+        force[0] += ftd_const * pow(delta_n, 1/4.) * (b.v[0] + b.w*params.rb);
     }
+
+    // gravity is added now because it would interfere with computing "fmax"
     force[1] += -params.m * params.g;
+
     return force / params.m;
 }
 
-double angular_acceleration(const parameters &params, const double &a_tangential,
+double angular_acceleration_1(const parameters &params, const double &a_tangential,
                             const double &w, const double &delta_n)
 {
     static const double torque_const = 4/3.*params.Er * sqrt(params.rb);
@@ -103,6 +116,7 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                da3, d2a3,
                da4, delta_t_0;
     bool reset_delta_t;
+    const double fmax_const = 1/6. * params.Er/params.Gr * params.mu_s;
 
     if (steps > params.output_lines)
         output_interval = steps / params.output_lines;
@@ -122,17 +136,19 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
                       << "\t" << b[0].w
                       << std::endl;
 
+        reset_delta_t = false;
+
         // RK4 INTEGRATION
         x1 = b[0].x;
         a1 = b[0].a;
         dx1 = b[0].v;
         da1 = b[0].w;
-        d2x1 = a_total_1(params, b[0]);
+        d2x1 = a_total_1(params, b[0], reset_delta_t);
         delta_t_0 = 0.0;
         if (NULL != b[0].wall_delta_t && x1[1] < 0.0)
             delta_t_0 = b[0].wall_delta_t[0];
         d2a1 = 0.0;
-        if (x1[1] < 0.0) d2a1 = angular_acceleration(params, d2x1[0], da1, -x1[1]);
+        if (x1[1] < 0.0) d2a1 = angular_acceleration_1(params, d2x1[0], da1, -x1[1]);
 
         x2 = b[0].x = x1 + dx1*0.5*params.dt;
         b[0].a = a1 + da1*0.5*params.dt;
@@ -141,9 +157,9 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
         if (NULL != b[0].wall_delta_t && x2[1] < 0.0)
             b[0].wall_delta_t[0] = delta_t_0 + dx1[0]*0.5*params.dt
                     + tan(da1*0.5*params.dt) * (params.rb+x2[1]);
-        d2x2 = a_total_1(params, b[0]);
+        d2x2 = a_total_1(params, b[0], reset_delta_t);
         d2a2 = 0.0;
-        if (x2[1] < 0.0) d2a2 = angular_acceleration(params, d2x2[0], da2, -x2[1]);
+        if (x2[1] < 0.0) d2a2 = angular_acceleration_1(params, d2x2[0], da2, -x2[1]);
 
         x3 = b[0].x = x1 + dx2*0.5*params.dt;
         b[0].a = a1 + da2*0.5*params.dt;
@@ -152,9 +168,9 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
         if (NULL != b[0].wall_delta_t && x3[1] < 0.0)
             b[0].wall_delta_t[0] = delta_t_0 + dx2[0]*0.5*params.dt
                     + tan(da2*0.5*params.dt) * (params.rb+x3[1]);
-        d2x3 = a_total_1(params, b[0]);
+        d2x3 = a_total_1(params, b[0], reset_delta_t);
         d2a3 = 0.0;
-        if (x3[1] < 0.0) d2a3 = angular_acceleration(params, d2x3[0], da3, -x3[1]);
+        if (x3[1] < 0.0) d2a3 = angular_acceleration_1(params, d2x3[0], da3, -x3[1]);
 
         x4 = b[0].x = x1 + dx3*params.dt;
         b[0].a = a1 + da3*params.dt;
@@ -163,16 +179,13 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
         if (NULL != b[0].wall_delta_t && x4[1] < 0.0)
             b[0].wall_delta_t[0] = delta_t_0 + dx3[0]*params.dt
                     + tan(da3*params.dt) * (params.rb+x4[1]);
-        d2x4 = a_total_1(params, b[0]);
+        d2x4 = a_total_1(params, b[0], reset_delta_t);
         //d2a4 = 0.0;
         //if (x4[1] < 0.0) d2a4 = angular_acceleration(params, d2x4[0], da4, -x4[1]);
 
         b[0].x = x1 + params.dt/6.0*(dx1 + 2*dx2 + 2*dx3 + dx4);
 
-        ac = (d2x1 + 2*d2x2 + 2*d2x3 + d2x4)/6.0;
-
         // checking for COLLISIONS
-        reset_delta_t = false;
         if (b[0].x[1] <= 0.0 && NULL == b[0].wall_delta_t) {
             // a collision with wall just started
             b[0].wall_delta_t = new double(0.0);
@@ -180,25 +193,27 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
             // a collision with wall just ended
             delete b[0].wall_delta_t;
             b[0].wall_delta_t = NULL;
-        } else if (b[0].x[1] <= 0.0 && NULL != b[0].wall_delta_t) {
-            // a collision continues: tangential force may need truncation
-            if (fabs(ac[0]) > params.mu_s*fabs(ac[1]+params.g)) {
-                ac[0] = params.mu_s*fabs(ac[1]+params.g) * ac[0]/fabs(ac[0]);
-                reset_delta_t = true;
-            }
         }
+
+        ac = (d2x1 + 2*d2x2 + 2*d2x3 + d2x4)/6.0;
 
         b[0].a = a1 + params.dt/6.0*(da1 + 2*da2 + 2*da3 + da4);
         b[0].v = dx1 + params.dt*ac;
         b[0].w = da1;
-        if (b[0].x[1] < 0.0) b[0].w += params.dt*angular_acceleration(params, ac[0], (da1 + 2*da2 + 2*da3 + da4)/6.0, -b[0].x[1]);
+        if (b[0].x[1] < 0.0) b[0].w += params.dt*angular_acceleration_1(
+                    params, ac[0], (da1 + 2*da2 + 2*da3 + da4)/6.0, -b[0].x[1]);
         //b[0].w = da1 + params.dt/6.0*(d2a1 + 2*d2a2 + 2*d2a3 + d2a4);
 
-        if (reset_delta_t)
-            b[0].wall_delta_t[0] = 0.0;
+        if (reset_delta_t && NULL != b[0].wall_delta_t)
+            // tangential contact force exceeded the static friction limit
+            b[0].wall_delta_t[0] = fmax_const * (-b[0].x[1])
+                    * fsign(b[0].wall_delta_t[0]);
         else if (NULL != b[0].wall_delta_t && b[0].x[1] < 0.0)
-            b[0].wall_delta_t[0] = delta_t_0 + params.dt/6.0*(dx1 + 2*dx2 + 2*dx3 + dx4)[0]
-                    + tan(params.dt/6.0*(da1 + 2*da2 + 2*da3 + da4)) * (params.rb+b[0].x[1]);
+            // the collision continues, so let's update delta_t
+            b[0].wall_delta_t[0] = delta_t_0
+                    + params.dt/6.0*(dx1 + 2*dx2 + 2*dx3 + dx4)[0]
+                    + tan(params.dt/6.0*(da1 + 2*da2 + 2*da3 + da4))
+                    * (params.rb+b[0].x[1]);
     }
 }
 

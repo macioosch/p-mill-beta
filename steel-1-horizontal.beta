@@ -2,7 +2,7 @@
 ./p-mill-beta          \
     --type  1          \
     --dt    1e-5       \
-    --tmax  1e+0       \
+    --tmax  4e-0       \
     --output_lines 1e4 \
     --e     0.7        \
     --E     2e11       \
@@ -12,10 +12,11 @@
     --rho   7.8e3      \
     --rb    1e-2       \
     --g     9.80665    \
-    --vx0   0.1        \
+    --vx0   0.2        \
     --vy0   0.0        \
-    --w0    3e2        \
-    --y0    0.0        \
+    --w0    0e2        \
+    --y0    0.01       \
     > output/steel-1-horizontal.csv
 
 ./plot-horizontal.gnuplot
+./animate-track.py output/steel-1-horizontal.csv
