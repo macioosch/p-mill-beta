@@ -10,7 +10,7 @@
     --mu_r  0.01       \
     --mu_s  0.20       \
     --rho   7.8e3      \
-    --rb    1e-2       \
+    --rb    5e-3       \
     --g     9.80665    \
     --vx0   0          \
     --vy0   0          \
@@ -20,4 +20,4 @@
 
 ./find-peaks.py output/steel-1-vertical.csv > output/steel-1-vertical-peaks.csv
 ./plot-vertical.gnuplot
-#./animate-track.py output/steel-1-vertical.csv
+./animate-track.py output/steel-1-vertical.csv

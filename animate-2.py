@@ -43,7 +43,7 @@ with open(argv[1], 'rb') as csvfile:
             rows += 1
 
 # A circle
-circle_r = 0.01
+circle_r = 0.005
 circle_t = np.linspace(0, 2*np.pi, 32)
 circle_x = circle_r * np.cos(circle_t)
 circle_y = circle_r * np.sin(circle_t)

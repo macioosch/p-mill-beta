@@ -7,7 +7,7 @@ set output "plots/".basename.".pdf"
 g = 9.80665
 h0 = 0.0
 ball_rho = 7.8e3
-ball_r = 0.01
+ball_r = 0.005
 ball_m = (4/3.) * pi * ball_r**3 * ball_rho
 ball_I = 2/5.*ball_m*ball_r**2
 

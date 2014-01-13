@@ -6,7 +6,7 @@ set output "plots/steel-1-vertical-collision.pdf"
 
 g = 9.80665
 h0 = 0.05
-radius = 0.01
+radius = 0.005
 rho = 7.8e3
 E = 2e11
 G = 8e10

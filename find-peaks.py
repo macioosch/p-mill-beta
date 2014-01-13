@@ -6,7 +6,7 @@ import csv
 g = 9.80665
 m = 3.2672563597333851e-02
 Er = 1.0666666666666667e+11
-radius = 0.01
+radius = 0.005
 h_static = -(9/16.)**(1/3.0) * ( g*m/(Er*sqrt(radius)) )**(2/3.0)
 
 old_v = 0.0
