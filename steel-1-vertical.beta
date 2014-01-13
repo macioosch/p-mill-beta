@@ -1,8 +1,8 @@
 #/usr/bin/env bash
 ./p-mill-beta          \
     --type  1          \
-    --dt    1e-6       \
-    --tmax  5e-1       \
+    --dt    1e-5       \
+    --tmax  1e-0       \
     --output_lines 2e4 \
     --e     0.70       \
     --E     2e11       \
@@ -15,8 +15,9 @@
     --vx0   0          \
     --vy0   0          \
     --w0    0          \
-    --y0    2e-2       \
+    --y0    5e-2       \
     > output/steel-1-vertical.csv
 
 ./find-peaks.py output/steel-1-vertical.csv > output/steel-1-vertical-peaks.csv
 ./plot-vertical.gnuplot
+#./animate-track.py output/steel-1-vertical.csv

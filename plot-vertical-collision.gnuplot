@@ -2,7 +2,7 @@
 set terminal pdf enhanced size 6,8
 file = "output/steel-1-vertical.csv"
 peaks = "output/steel-1-vertical-peaks.csv"
-set output "plots/steel-1-vertical.pdf"
+set output "plots/steel-1-vertical-collision.pdf"
 
 g = 9.80665
 h0 = 0.05
@@ -19,21 +19,19 @@ E0 = energy(h0 - h_static, 0)
 restitution = 0.7
 
 set multiplot layout 4,1
-set format xy "%.2f"
+set format xy "%.5f"
 unset key
 set grid
 set xlabel "t [s]"
 
+set xrange [0.10095:0.10108]
+
 set ylabel "y - h_s [m]"
-set yrange [-.01:.06]
 plot file u 1:3 w l
-
 set ylabel "v_y [m s^{-1}]"
-set yrange [-1.2:1.2]
 plot file u 1:5 w l
-
 set ylabel "E/E_0 - 1"
-set yrange [-1.2:0.2]
+#set yrange [-1.2:0.2]
 plot file u 1:(energy($3, $5)/energy(h0, 0) - 1) w l
 
 set ylabel "E_i / E_{t,i} - 1"
@@ -42,8 +40,7 @@ set format x "%.0f"
 set format y "%.3f"
 set xlabel "i"
 set xtics 1
-set xrange [0:11]
-set autoscale y
+set xrange [0:10]
 plot peaks u 1:(abs($2 / (E0*restitution**(2*$1)) - 1))
 #plot peaks u 1:(E0*restitution**(2*$1)) w l t "theory",\
 #     peaks u 1:2 w l t "simulation"
