@@ -1,0 +1,22 @@
+#/usr/bin/env bash
+./p-mill-beta          \
+    --type  1          \
+    --dt    1e-6       \
+    --tmax  1e-1       \
+    --output_lines 1e4 \
+    --e     0.70       \
+    --E     2e11       \
+    --G     8e10       \
+    --mu_r  0.01       \
+    --mu_s  0.20       \
+    --rho   7.8e3      \
+    --rb    5e-3       \
+    --g     9.80665    \
+    --vx0   0          \
+    --vy0   0          \
+    --w0    0          \
+    --y0    0          \
+    > output/steel-1-static.csv
+
+./plot-static.gnuplot
+#./animate-track.py output/steel-1-static.csv

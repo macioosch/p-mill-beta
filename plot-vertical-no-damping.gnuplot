@@ -1,8 +1,7 @@
 #!/usr/bin/env gnuplot
 set terminal pdf enhanced size 6,8
 file = "output/steel-1-vertical.csv"
-peaks = "output/steel-1-vertical-peaks.csv"
-set output "plots/steel-1-vertical.pdf"
+set output "plots/steel-1-vertical-no-damping.pdf"
 
 g = 9.80665
 h0 = 0.01
