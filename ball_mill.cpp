@@ -49,7 +49,7 @@ void type_2_init(parameters &params, std::vector<ball> &b)
 
 void type_3_init(parameters &params, std::vector<ball> &b)
 {
-    int u_i, v_i, n_max = (int) floor((params.rc/params.rb + 1.0)/2.0) - 1.0;
+    int u_i, v_i, n_max = (int) floor((params.rc/params.rb*2.0/sqrt(3.0) + 1.0)/2.0) - 1.0;
     u_i = v_i = -n_max;
     Eigen::Vector2d u, v, r;
     u << 2*params.rb, 0.0;
@@ -444,6 +444,169 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
             n_dir = r01.normalized();
             v01 = b[1].v - b[0].v + (b[0].w + b[1].w)*params.rb*cross_matrix*n_dir;
             delta_t[0] = delta_t_0 + v01*params.dt;
+        }
+    }
+}
+
+void a_total_3(const parameters &params, std::vector<ball> &b,
+               std::vector<bool> &reset_wall_delta_t,
+               Eigen::MatrixXd &acceleration_matrix)
+{
+    static Eigen::Matrix2d cross_matrix;
+    static Eigen::Vector2d force_n, force_t, rij, vij, acceleration,
+            n_dir, t_dir, delta_t;
+    static double delta_n, delta_t_scalar, fmax;
+    static const double
+            fnc_const = 4/3.*params.Er * sqrt(params.rb),
+            fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 1/4.),
+            ftc_const = -8*params.Gr * sqrt(params.rb),
+            ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.);
+    cross_matrix << 0, 1, -1, 0;
+    acceleration_matrix *= 0.0;
+
+    for (int i=0; i<params.N; ++i) {
+        // for every ball i = 0..N:
+
+        //optional force of gravity
+        acceleration_matrix.col(i)[1] -= params.g;
+
+        // force from the container
+        delta_n = b[i].x.norm() + params.rb - params.rc;
+        if (delta_n > 0.0) {
+            // the ball i is colliding with the container
+            n_dir = -b[i].x.normalized();
+            t_dir = cross_matrix * n_dir;
+            vij = b[i].v - b[i].w*params.rb*t_dir; // STATIC CONTAINER!
+
+            // the normal force
+            force_n = (fnc_const * pow(delta_n, 3/2.)
+                    + fnd_const * pow(delta_n, 1/4.) * vij.dot(n_dir)) * n_dir;
+
+            // tangential contact force
+            delta_t_scalar = 0.0;
+            if(NULL != b[i].wall_delta_t)
+                delta_t_scalar = b[i].wall_delta_t[0];
+            force_t = ftc_const * sqrt(delta_n) * delta_t_scalar * t_dir;
+            fmax = force_n.norm() * params.mu_s;
+            if (force_t.norm() > fmax) {
+                force_t = fmax * force_t.normalized();
+                reset_wall_delta_t[i] = true;
+            }
+
+            //tangential damping force
+            force_t -= ftd_const * pow(delta_n, 1/4.)
+                    * cross2d(n_dir, vij) * t_dir;
+
+            acceleration = (force_n + force_t)/params.m;
+            acceleration_matrix.col(i) += acceleration;
+        }
+
+        // forces from other balls
+        for (int j=i+1; j<params.N; ++j) {
+            // for every ball j = i..N (j > i):
+            rij = b[j].x - b[i].x;
+
+            if (rij.norm() < 2*params.rb) {
+                // the balls are colliding
+                delta_n = 2*params.rb - rij.norm();
+                delta_t << 0, 0;
+                n_dir = rij.normalized();
+                t_dir = cross_matrix * n_dir;
+                vij = b[j].v - b[i].v + (b[i].w + b[j].w)*params.rb*t_dir;
+
+                // the normal force
+                force_n = (fnc_const * pow(delta_n, 3/2.)
+                        + fnd_const * pow(delta_n, 1/4.) * vij.dot(n_dir)) * n_dir;
+
+                // tangential contact force
+                if (b[i].ball_delta_t.find(j) != b[i].ball_delta_t.end())
+                    delta_t = b[i].ball_delta_t[j].value * t_dir;
+                force_t = ftc_const * sqrt(delta_n) * delta_t;
+                fmax = force_n.norm() * params.mu_s;
+                if (force_t.norm() > fmax) {
+                    force_t = fmax * force_t.normalized();
+                    b[i].ball_delta_t[j].reset = true;
+                }
+
+                //tangential damping force
+                force_t -= ftd_const * pow(delta_n, 1/4.)
+                        * cross2d(n_dir, vij) * t_dir;
+
+                acceleration = (force_n + force_t)/params.m;
+                acceleration_matrix.col(i) -= acceleration;
+                acceleration_matrix.col(j) += acceleration;
+            }
+        }
+    }
+}
+
+void simulate_3(const parameters &params, std::vector<ball> &b)
+{
+    const int steps = std::ceil(params.tmax / params.dt);
+    int output_interval;
+    std::vector<ball> b1, b2, b3, b4;
+    Eigen::MatrixXd d2x1(2, params.N), d2x2(2, params.N),
+                    d2x3(2, params.N), d2x4(2, params.N), ac(2, params.N);
+    std::vector<bool> reset_wall_delta_t;
+    Eigen::Matrix2d cross_matrix;
+    cross_matrix << 0, -1, 1, 0;
+
+    if (steps > params.output_lines)
+        output_interval = steps / params.output_lines;
+    else
+        output_interval = 1;
+
+    for (int step=0; step<=steps; ++step) {
+        // occasional OUTPUT
+        if (step % output_interval == 0) {
+            std::cout << std::setprecision(14) << params.dt*step;
+            for (int j=0; j<params.N; ++j)
+                 std::cout << "\t" << b[j].x[0]
+                           << "\t" << b[j].x[1]
+                           << "\t" << b[j].v[0]
+                           << "\t" << b[j].v[1]
+                           << "\t" << b[j].a
+                           << "\t" << b[j].w;
+            std::cout << std::endl;
+        }
+
+        // RK4 INTEGRATION
+        b1 = b;
+        a_total_3(params, b1, reset_wall_delta_t, d2x1);
+
+        b2 = b;
+        for (int j=0; j<params.N; ++j) {
+            b2[j].x = b1[j].x + b1[j].v*0.5*params.dt;
+            //b2[j].a = b1[j].a + b1[j].w*0.5*params.dt;
+            b2[j].v = b1[j].v + d2x1.col(j)*0.5*params.dt;
+            //b2[j].w = b1[j].w + d2a1(j)*0.5*params.dt;
+        }
+        a_total_3(params, b2, reset_wall_delta_t, d2x2);
+
+        b3 = b;
+        for (int j=0; j<params.N; ++j) {
+            b3[j].x = b1[j].x + b2[j].v*0.5*params.dt;
+            //b3[j].a = b1[j].a + b2[j].w*0.5*params.dt;
+            b3[j].v = b1[j].v + d2x2.col(j)*0.5*params.dt;
+            //b3[j].w = b1[j].w + d2a2(j)*0.5*params.dt;
+        }
+        a_total_3(params, b3, reset_wall_delta_t, d2x3);
+
+        b4 = b;
+        for (int j=0; j<params.N; ++j) {
+            b4[j].x = b1[j].x + b3[j].v*params.dt;
+            //b4[j].a = b1[j].a + b3[j].w*params.dt;
+            b4[j].v = b1[j].v + d2x3.col(j)*params.dt;
+            //b4[j].w = b1[j].w + d2a3(j)*params.dt;
+        }
+        a_total_3(params, b4, reset_wall_delta_t, d2x4);
+
+        ac = (d2x1 + 2*d2x2 + 2*d2x3 + d2x4)/6.0;
+        for (int j=0; j<params.N; ++j) {
+            b[j].x = b1[j].x + params.dt/6.0*(b1[j].v + 2*b2[j].v + 2*b3[j].v + b4[j].v);
+            //b[j].a = b1[j].a + params.dt/6.0*(b1[j].w + 2*b2[j].w + 2*b3[j].w + b4[j].w);
+            b[j].v = b1[j].v + params.dt * ac.col(j);
+            //b[j].w = b1[j].w + params.dt/6.0*(d2a1(j) + 2*d2a2(j) + 2*d2a3(j) + d2a4(j));
         }
     }
 }

@@ -21,3 +21,5 @@ HEADERS += \
     parse_cli_opts.h \
     parameters.h \
     ball_mill.h
+
+QMAKE_CXXFLAGS += -std=c++0x

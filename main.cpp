@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         simulate_2(params, b);
     } else if (3 == params.type) {
         type_3_init(params, b);
-        //simulate_3(params, b);
+        simulate_3(params, b);
     }
 
     return return_status;

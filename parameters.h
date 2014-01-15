@@ -16,7 +16,8 @@ struct parameters {
     double w1, x0;
 
     // additionally for type 2, params of ball 2:
-    double N, Eavg, rc;
+    int N;
+    double Eavg, rc;
 
     // parameters of the balls set by the user
     double E, e, G, mu_r, mu_s, nu, rho, rb;
