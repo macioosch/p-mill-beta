@@ -1,3 +1,4 @@
+#include <eigen3/Eigen/Geometry>
 #include <iomanip>
 #include <iostream>
 #include <math.h>
@@ -24,10 +25,8 @@ void type_1_init(parameters &params, std::vector<ball> &b)
 
     b[0].a = 0.0;
     b[0].w = params.w0;
-    b[0].x[0] = 0.0;
-    b[0].x[1] = params.y0;
-    b[0].v[0] = params.vx0;
-    b[0].v[1] = params.vy0;
+    b[0].x << 0.0, params.y0;
+    b[0].v << params.vx0, params.vy0;
     b[0].wall_delta_t = NULL;
 }
 
@@ -37,19 +36,46 @@ void type_2_init(parameters &params, std::vector<ball> &b)
 
     b[0].a = 0.0;
     b[0].w = params.w0;
-    b[0].x[0] = -params.x0;
-    b[0].x[1] = params.y0;
-    b[0].v[0] = params.vx0;
-    b[0].v[1] = 0.0;
+    b[0].x << -params.x0, params.y0;
+    b[0].v << params.vx0, 0.0;
     b[0].wall_delta_t = NULL;
 
     b[1].a = 0.0;
     b[1].w = params.w1;
-    b[1].x[0] = 2*params.rb;
-    b[1].x[1] = 0.0;
-    b[1].v[0] = 0.0;
-    b[1].v[1] = 0.0;
+    b[1].x << 2*params.rb, 0.0;
+    b[1].v << 0.0, 0.0;
     b[1].wall_delta_t = NULL;
+}
+
+void type_3_init(parameters &params, std::vector<ball> &b)
+{
+    int u_i, v_i, n_max = (int) floor((params.rc/params.rb + 1.0)/2.0) - 1.0;
+    u_i = v_i = -n_max;
+    Eigen::Vector2d u, v, r;
+    u << 2*params.rb, 0.0;
+    v = Eigen::Rotation2Dd(M_PI/3.0) * u;
+
+    b.resize(params.N);
+
+    for (int i=0; i<params.N; ++i) {
+        b[i].a = 0.0;
+        b[i].w = 0.0;
+        b[i].v << 0.0, -0.1;
+        b[i].wall_delta_t = NULL;
+
+        do {
+            r = u_i*u + v_i*v;
+            ++u_i;
+            if (u_i > n_max) {
+                u_i = -n_max;
+                ++v_i;
+                if (v_i > n_max)
+                    exit(-1);
+            }
+        } while (r.norm() > params.rc-params.rb);
+
+        b[i].x = r;
+    }
 }
 
 Eigen::Vector2d a_total_1(const parameters &params, const ball &b, bool &reset_delta_t)

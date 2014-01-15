@@ -52,8 +52,20 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
             "1st ball's initial distance from the 2nd ball [m]")
     ;
 
+    po::options_description opt_type3(
+                "Options for type 3 simulation, balls in a container");
+    opt_type2.add_options()
+        ("N", po::value<double>(&(params.N)),
+            "number of balls")
+        ("Eavg", po::value<double>(&(params.Eavg)),
+            "balls' mean starting velocity [m s^-1]")
+        ("rc", po::value<double>(&(params.rc)),
+            "container's radius [m]")
+    ;
+
     po::options_description opt_all("Allowed options");
-    opt_all.add(opt_general).add(opt_balls).add(opt_type1).add(opt_type2);
+    opt_all.add(opt_general).add(opt_balls);
+    opt_all.add(opt_type1).add(opt_type2).add(opt_type3);
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, opt_all), vm);
