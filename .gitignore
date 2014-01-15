@@ -12,9 +12,6 @@ Makefile
 *.Debug
 *.Release
 
-# local qtcreator configuration:
-*.user*
-
 # markdown preview:
 *.html
 
