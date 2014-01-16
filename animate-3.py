@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from sys import argv
 
-step = 5
+step = 20
 delta_a = -np.pi/2
 
 t = []

@@ -488,15 +488,16 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
             if(NULL != b[i].wall_delta_t)
                 delta_t_scalar = b[i].wall_delta_t[0];
             force_t = ftc_const * sqrt(delta_n) * delta_t_scalar * t_dir;
-            fmax = force_n.norm() * params.mu_s;
-            if (force_t.norm() > fmax) {
-                force_t = fmax * force_t.normalized();
-                reset_wall_delta_t[i] = true;
-            }
 
             // tangential damping force
             force_t -= ftd_const * pow(delta_n, 1/4.)
                     * cross2d(n_dir, vij) * t_dir;
+
+            fmax = force_n.norm() * params.mu_s;
+            if (force_t.norm() > fmax) {
+                force_t = fmax * force_t.normalized();
+                //reset_wall_delta_t[i] = true;
+            }
 
             acceleration = (force_n + force_t)/params.m;
             acceleration_matrix.col(i) += acceleration;
@@ -530,15 +531,16 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
                 if (b[i].ball_delta_t.find(j) != b[i].ball_delta_t.end())
                     delta_t = b[i].ball_delta_t[j].value * t_dir;
                 force_t = ftc_const * sqrt(delta_n) * delta_t;
-                fmax = force_n.norm() * params.mu_s;
-                if (force_t.norm() > fmax) {
-                    force_t = fmax * force_t.normalized();
-                    b[i].ball_delta_t[j].reset = true;
-                }
 
                 //tangential damping force
                 force_t += ftd_const * pow(delta_n, 1/4.)
                         * cross2d(n_dir, vij) * t_dir;
+
+                fmax = force_n.norm() * params.mu_s;
+                if (force_t.norm() > fmax) {
+                    force_t = fmax * force_t.normalized();
+                    //b[i].ball_delta_t[j].reset = true;
+                }
 
                 acceleration = (force_n + force_t)/params.m;
                 acceleration_matrix.col(i) += acceleration;
