@@ -575,6 +575,11 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
     else
         output_interval = 1;
 
+    const int bar_width = 70;
+    double progress = 0.0;
+    int next_progress_bar = 0;
+    int bar_pos = 0;
+
     for (int step=0; step<=steps; ++step) {
         // occasional OUTPUT
         if (step % output_interval == 0) {
@@ -587,6 +592,20 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
                            << "\t" << b[j].a
                            << "\t" << b[j].w;
             std::cout << std::endl;
+            // progress bar
+            if (step >= next_progress_bar) {
+                progress = step / (double) steps;
+                std::cerr << "[";
+                bar_pos = bar_width * progress;
+                for (int i = 0; i < bar_width; ++i) {
+                    if (i < bar_pos) std::cerr << "=";
+                    else if (i == bar_pos) std::cerr << ">";
+                    else std::cerr << " ";
+                }
+                std::cerr << "] " << int(progress * 100.0) << " %\r";
+                std::cerr.flush();
+                next_progress_bar += steps / bar_width + 1;
+            }
         }
 
         // RK4 INTEGRATION
@@ -628,4 +647,5 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
             b[j].w = b1[j].w + params.dt/6.0*(d2a1(j) + 2*d2a2(j) + 2*d2a3(j) + d2a4(j));
         }
     }
+    std::cerr << std::endl;
 }

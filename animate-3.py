@@ -75,8 +75,8 @@ time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes)
 
 plt.plot(circle_x*container_r/circle_r, circle_y*container_r/circle_r)
 
-ax.set_xlabel("x [cm]")
-ax.set_ylabel("y [cm]")
+ax.set_xlabel("x [m]")
+ax.set_ylabel("y [m]")
 indicator_length = max(circle_r, 0.04*view_limit)
 
 # initialization function: plot the background of each frame
