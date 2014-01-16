@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from sys import argv
 
-step = 30
+step = 5
 delta_a = -np.pi/2
 
 t = []
@@ -58,8 +58,8 @@ container_r = 0.04
 view_limit = 1.1*container_r
 
 def plot_track(x, y, a):
-    ax.plot(x + circle_r*np.cos(a + delta_a), y + circle_r*np.sin(a + delta_a), "#aaaaaa")
-    ax.plot(x, y, "#666666", lw=2)
+    #ax.plot(x + circle_r*np.cos(a + delta_a), y + circle_r*np.sin(a + delta_a), "#aaaaaa")
+    ax.plot(x, y, "#aaaaaa", lw=1)
 
 # First set up the figure, the axis, and the plot element we want to animate
 fig = plt.figure()

@@ -1,5 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
+#include <eigen3/Eigen/Core>
 
 struct parameters {
     /* type of the simulation, supported right now:
@@ -15,14 +16,16 @@ struct parameters {
     // additionally for type 2, params of ball 2:
     double w1, x0;
 
-    // additionally for type 2, params of ball 2:
+    // additionally for type 3:
     int N;
-    double Eavg, rc;
+    double Eavg, rc, wc, rs, ws;
+    Eigen::Vector2d sun_center;
 
     // parameters of the balls set by the user
     double E, e, G, mu_r, mu_s, nu, rho, rb;
     // other parameters
     double tmax, dt, output_lines;
+    Eigen::Matrix2d cross_matrix;
 
     // parameters computed by the program
     double Er, Gr, m, mr, rr, beta;

@@ -245,7 +245,7 @@ void simulate_1(const parameters &params, std::vector<ball> &b)
 Eigen::Matrix2d a_total_2(const parameters &params, const std::vector<ball> &b,
                           const Eigen::Vector2d *delta_t_given, bool &reset_delta_t)
 {
-    static Eigen::Matrix2d acceleration_matrix, cross_matrix;
+    static Eigen::Matrix2d acceleration_matrix;
     static Eigen::Vector2d force, force_n, force_t, r01, v01, acceleration,
             n_dir, delta_t;
     static double delta_n, fmax;
@@ -254,7 +254,6 @@ Eigen::Matrix2d a_total_2(const parameters &params, const std::vector<ball> &b,
             fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 1/4.),
             ftc_const = -8*params.Gr * sqrt(params.rb),
             ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.);
-    cross_matrix << 0, 1, -1, 0;
 
     force << 0, 0;
     r01 = b[1].x - b[0].x;
@@ -267,7 +266,7 @@ Eigen::Matrix2d a_total_2(const parameters &params, const std::vector<ball> &b,
         if (NULL != delta_t_given)
             delta_t = delta_t_given[0];
         n_dir = r01.normalized();
-        v01 = b[1].v - b[0].v + (b[0].w + b[1].w)*params.rb*cross_matrix*n_dir;
+        v01 = b[1].v - b[0].v + (b[0].w + b[1].w)*params.rb*params.cross_matrix*n_dir;
 
         // the normal force
         force_n = (fnc_const * pow(delta_n, 3/2.)
@@ -283,7 +282,7 @@ Eigen::Matrix2d a_total_2(const parameters &params, const std::vector<ball> &b,
 
         //tangential damping force
         force_t -= ftd_const * pow(delta_n, 1/4.)
-                * (v01[1]*n_dir[0] - v01[0]*n_dir[1]) * cross_matrix*n_dir;
+                * (v01[1]*n_dir[0] - v01[0]*n_dir[1]) * params.cross_matrix*n_dir;
 
         force += force_n + force_t;
     }
@@ -315,13 +314,12 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
     const int steps = std::ceil(params.tmax / params.dt);
     int output_interval;
     std::vector<ball> b1, b2, b3, b4;
-    Eigen::Matrix2d d2x1, d2x2, d2x3, d2x4, cross_matrix, ac;
+    Eigen::Matrix2d d2x1, d2x2, d2x3, d2x4, ac;
     Eigen::Vector2d d2a1, d2a2, d2a3, d2a4, *delta_t = NULL, delta_t_0,
             r01, v01, n_dir, ac_n, ac_t;
     bool colliding, reset_delta_t;
     double delta_n;
     const double fmax_const = 1/6. * params.Er/params.Gr * params.mu_s;
-    cross_matrix << 0, -1, 1, 0;
 
     if (steps > params.output_lines)
         output_interval = steps / params.output_lines;
@@ -366,7 +364,7 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
         colliding = r01.norm() < 2*params.rb;
         if (NULL != delta_t && colliding) {
             n_dir = r01.normalized();
-            v01 = b1[1].v - b1[0].v + (b1[0].w + b1[1].w)*params.rb*cross_matrix*n_dir;
+            v01 = b1[1].v - b1[0].v + (b1[0].w + b1[1].w)*params.rb*params.cross_matrix*n_dir;
             delta_t[0] = delta_t_0 + v01*0.5*params.dt;
         }
         d2x2 = a_total_2(params, b2, delta_t, reset_delta_t);
@@ -385,7 +383,7 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
         colliding = r01.norm() < 2*params.rb;
         if (NULL != delta_t && colliding) {
             n_dir = r01.normalized();
-            v01 = b2[1].v - b2[0].v + (b2[0].w + b2[1].w)*params.rb*cross_matrix*n_dir;
+            v01 = b2[1].v - b2[0].v + (b2[0].w + b2[1].w)*params.rb*params.cross_matrix*n_dir;
             delta_t[0] = delta_t_0 + v01*0.5*params.dt;
         }
         d2x3 = a_total_2(params, b3, delta_t, reset_delta_t);
@@ -404,7 +402,7 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
         colliding = r01.norm() < 2*params.rb;
         if (NULL != delta_t && colliding) {
             n_dir = r01.normalized();
-            v01 = b3[1].v - b3[0].v + (b3[0].w + b3[1].w)*params.rb*cross_matrix*n_dir;
+            v01 = b3[1].v - b3[0].v + (b3[0].w + b3[1].w)*params.rb*params.cross_matrix*n_dir;
             delta_t[0] = delta_t_0 + v01*params.dt;
         }
         d2x4 = a_total_2(params, b4, delta_t, reset_delta_t);
@@ -442,7 +440,7 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
         else if (NULL != delta_t && colliding) {
             // the collision continues, so let's update delta_t
             n_dir = r01.normalized();
-            v01 = b[1].v - b[0].v + (b[0].w + b[1].w)*params.rb*cross_matrix*n_dir;
+            v01 = b[1].v - b[0].v + (b[0].w + b[1].w)*params.rb*params.cross_matrix*n_dir;
             delta_t[0] = delta_t_0 + v01*params.dt;
         }
     }
@@ -453,7 +451,6 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
                Eigen::MatrixXd &acceleration_matrix,
                Eigen::VectorXd &angular_acceleration)
 {
-    static Eigen::Matrix2d cross_matrix;
     static Eigen::Vector2d force_n, force_t, rij, vij, acceleration,
             n_dir, t_dir, delta_t, ri;
     static double delta_n, delta_t_scalar, fmax, torque_var;
@@ -463,23 +460,24 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
             ftc_const = -8*params.Gr * sqrt(params.rb),
             ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.),
             moment_inertia = 2/5.*params.m * pow(params.rb, 2);
-    cross_matrix << 0, 1, -1, 0;
     acceleration_matrix *= 0.0;
     angular_acceleration *= 0.0;
 
     for (int i=0; i<params.N; ++i) {
         // for every ball i = 0..N:
 
-        //optional force of gravity
-        acceleration_matrix.col(i)[1] -= params.g;
+        // fictitious forces
+        acceleration_matrix.col(i) += params.ws
+                * (params.ws*(b[i].x - params.sun_center)
+                   +2*params.cross_matrix*b[i].v);
 
         // force from the container
         delta_n = b[i].x.norm() + params.rb - params.rc;
         if (delta_n > 0.0) {
             // the ball i is colliding with the container
             n_dir = -b[i].x.normalized();
-            t_dir = cross_matrix * n_dir;
-            vij = b[i].v + b[i].w*params.rb*t_dir; // STATIC CONTAINER!
+            t_dir = params.cross_matrix * n_dir;
+            vij = b[i].v + (b[i].w*params.rb - params.wc*params.rc)*t_dir;
 
             // the normal force
             force_n = (fnc_const * pow(delta_n, 3/2.)
@@ -520,7 +518,7 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
                 delta_n = 2*params.rb - rij.norm();
                 delta_t << 0, 0;
                 n_dir = -rij.normalized();
-                t_dir = cross_matrix * n_dir;
+                t_dir = params.cross_matrix * n_dir;
                 ri = (b[j].x - b[i].x) / 2.0;
                 vij = b[j].v - b[i].v - (b[i].w + b[j].w)*ri.norm()*t_dir;
 
@@ -567,8 +565,6 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
     Eigen::VectorXd d2a1(params.N), d2a2(params.N),
                     d2a3(params.N), d2a4(params.N);
     std::vector<bool> reset_wall_delta_t;
-    Eigen::Matrix2d cross_matrix;
-    cross_matrix << 0, -1, 1, 0;
 
     if (steps > params.output_lines)
         output_interval = steps / params.output_lines;

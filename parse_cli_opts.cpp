@@ -58,9 +58,15 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
         ("N", po::value<int>(&(params.N)),
             "number of balls")
         ("Eavg", po::value<double>(&(params.Eavg)),
-            "balls' mean starting velocity [m s^-1]")
+            "balls' mean starting velocity [J]")
         ("rc", po::value<double>(&(params.rc)),
             "container's radius [m]")
+        ("wc", po::value<double>(&(params.wc)),
+            "container's angular velocity [s^-1]")
+        ("rs", po::value<double>(&(params.rs)),
+            "sun wheel's radius [m]")
+        ("ws", po::value<double>(&(params.ws)),
+            "sun wheel's angular velocity [s^-1]")
     ;
 
     po::options_description opt_all("Allowed options");
@@ -91,6 +97,8 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
     params.mr = params.m / 2.0;
     params.rr = params.rb / 2.0;
     params.beta = -pow(1.0 + pow(M_PI/log(params.e), 2), -0.5);
+    params.sun_center << 0, params.rs;
+    params.cross_matrix << 0, 1, -1, 0;
 
     if (1 == params.type)
         std::cout << "# t\tx\ty\tvx\tvy\ta\tw\n";
