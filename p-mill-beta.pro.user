@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.0.0, 2014-01-15T18:24:57. -->
+<!-- Written by QtCreator 3.0.0, 2014-01-16T14:59:26. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -56,7 +56,7 @@
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{d6372b54-f724-4ae0-8ad3-9c764a7654ee}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
-   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">2</value>
+   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">3</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/mc/code/qt/p-mill-beta</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
@@ -173,7 +173,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">p-mill-beta</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">type 3</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/mc/code/qt/p-mill-beta/p-mill-beta.pro</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--type 3 --dt 1e-5 --tmax 1e-2 --output_lines 1e2 --e 0.7 --E 2e11 --G 8e10 --mu_r 0.01 --mu_s 0.20 --rho 7.8e3 --rb 5e-3 --rc 8e-2 --Eavg 4e-5 --N 3</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--type 3 --dt 1e-5 --tmax 1e-1 --output_lines 1e3 --e 0.70 --E 2e11 --G 8e10 --mu_r 0.01 --mu_s 0.20 --rho 7.8e3 --rb 5e-3 --g 0.0 --rc 3.9e-2 --Eavg 4e-5 --N 3</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">p-mill-beta.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseTerminal">false</value>
@@ -185,7 +185,25 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
    </valuemap>
-   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">3</value>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.3">
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">p-mill-beta</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">type 4</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/mc/code/qt/p-mill-beta/p-mill-beta.pro</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--type 4 --dt 1e-5 --tmax 1e-1 --output_lines 1e3 --e 0.70 --E 2e11 --G 8e10 --mu_r 0.01 --mu_s 0.20 --rho 7.8e3 --rb 5e-3 --g 0.0 --rc 4e-2 --Eavg 4e-5 --N 2 --vx0 0.1 --x0 0.000 --y0 0.009 --w0 0e2 --w1 0e2</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">p-mill-beta.pro</value>
+    <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
+    <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseTerminal">false</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
+    <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
+    <value type="bool" key="RunConfiguration.UseCppDebugger">true</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">false</value>
+    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+   </valuemap>
+   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">4</value>
   </valuemap>
  </data>
  <data>
