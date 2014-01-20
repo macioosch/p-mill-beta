@@ -1,7 +1,7 @@
 #/usr/bin/env bash
 ./p-mill-beta          \
     --type  2          \
-    --dt    1e-6       \
+    --dt    1e-5       \
     --tmax  4e-1       \
     --output_lines 1e3 \
     --e     0.7        \

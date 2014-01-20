@@ -15,7 +15,7 @@
     --vx0   0.2        \
     --vy0   0.0        \
     --w0    0e2        \
-    --y0    0.1        \
+    --y0    0.0        \
     > output/steel-1-horizontal.csv
 
 ./plot-horizontal.gnuplot

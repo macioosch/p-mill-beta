@@ -16,7 +16,10 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from sys import argv
 
-step = 20
+circle_r = 0.005
+container_r = 0.0375
+
+step = 10
 delta_a = -np.pi/2
 
 t = []
@@ -44,7 +47,6 @@ with open(argv[1], 'rb') as csvfile:
             rows += 1
 
 # A circle
-circle_r = 0.005
 circle_t = np.linspace(0, 2*np.pi, 32)
 circle_x = circle_r * np.cos(circle_t)
 circle_y = circle_r * np.sin(circle_t)
@@ -54,12 +56,12 @@ x = [ np.array(i) for i in x ]
 y = [ np.array(i) for i in y ]
 a = [ np.array(i) for i in a ]
 
-container_r = 0.04
 view_limit = 1.1*container_r
 
 def plot_track(x, y, a):
+    pass
     #ax.plot(x + circle_r*np.cos(a + delta_a), y + circle_r*np.sin(a + delta_a), "#aaaaaa")
-    ax.plot(x, y, "#aaaaaa", lw=1)
+    #ax.plot(x, y, "#cccccc", lw=1, alpha=0.2)
 
 # First set up the figure, the axis, and the plot element we want to animate
 fig = plt.figure()

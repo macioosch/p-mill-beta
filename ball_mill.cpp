@@ -103,14 +103,15 @@ Eigen::Vector2d a_total_1(const parameters &params, const ball &b, bool &reset_d
         if (NULL != b.wall_delta_t)
             delta_t = b.wall_delta_t[0];
         force[0] += ftc_const * sqrt(delta_n) * delta_t;
+
+        //tangential damping force
+        force[0] += ftd_const * pow(delta_n, 1/4.) * (b.v[0] + b.w*params.rb);
+
         fmax = fabs(force[1] * params.mu_s);
         if (fabs(force[0]) > fmax) {
             force[0] = fmax * force[0] / fabs(force[0]);
             reset_delta_t  = true;
         }
-
-        //tangential damping force
-        force[0] += ftd_const * pow(delta_n, 1/4.) * (b.v[0] + b.w*params.rb);
     }
 
     // gravity is added now because it would interfere with computing "fmax"
@@ -274,15 +275,16 @@ Eigen::Matrix2d a_total_2(const parameters &params, const std::vector<ball> &b,
 
         // tangential contact force
         force_t = ftc_const * sqrt(delta_n) * delta_t;
+
+        //tangential damping force
+        force_t -= ftd_const * pow(delta_n, 1/4.)
+                * (v01[1]*n_dir[0] - v01[0]*n_dir[1]) * params.cross_matrix*n_dir;
+
         fmax = force_n.norm() * params.mu_s;
         if (force_t.norm() > fmax) {
             force_t = fmax * force_t.normalized();
             reset_delta_t = true;
         }
-
-        //tangential damping force
-        force_t -= ftd_const * pow(delta_n, 1/4.)
-                * (v01[1]*n_dir[0] - v01[0]*n_dir[1]) * params.cross_matrix*n_dir;
 
         force += force_n + force_t;
     }
@@ -434,7 +436,7 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
             b[j].w = b1[j].w + params.dt/6.0*(d2a1(j) + 2*d2a2(j) + 2*d2a3(j) + d2a4(j));
         }
 
-        if (reset_delta_t && NULL != delta_t && colliding)
+        if (reset_delta_t && NULL != delta_t && colliding && delta_t[0].norm() > 0.0)
             // tangential contact force exceeded the static friction limit
             delta_t[0] = fmax_const * delta_n * delta_t[0].normalized();
         else if (NULL != delta_t && colliding) {
@@ -447,7 +449,6 @@ void simulate_2(const parameters &params, std::vector<ball> &b)
 }
 
 void a_total_3(const parameters &params, std::vector<ball> &b,
-               std::vector<bool> &reset_wall_delta_t,
                Eigen::MatrixXd &acceleration_matrix,
                Eigen::VectorXd &angular_acceleration)
 {
@@ -566,7 +567,6 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
                     d2x3(2, params.N), d2x4(2, params.N), ac(2, params.N);
     Eigen::VectorXd d2a1(params.N), d2a2(params.N),
                     d2a3(params.N), d2a4(params.N);
-    std::vector<bool> reset_wall_delta_t;
 
     if (steps > params.output_lines)
         output_interval = steps / params.output_lines;
@@ -608,7 +608,7 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
 
         // RK4 INTEGRATION
         b1 = b;
-        a_total_3(params, b1, reset_wall_delta_t, d2x1, d2a1);
+        a_total_3(params, b1, d2x1, d2a1);
 
         b2 = b;
         for (int j=0; j<params.N; ++j) {
@@ -617,7 +617,7 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
             b2[j].v = b1[j].v + d2x1.col(j)*0.5*params.dt;
             b2[j].w = b1[j].w + d2a1(j)*0.5*params.dt;
         }
-        a_total_3(params, b2, reset_wall_delta_t, d2x2, d2a2);
+        a_total_3(params, b2, d2x2, d2a2);
 
         b3 = b;
         for (int j=0; j<params.N; ++j) {
@@ -626,7 +626,7 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
             b3[j].v = b1[j].v + d2x2.col(j)*0.5*params.dt;
             b3[j].w = b1[j].w + d2a2(j)*0.5*params.dt;
         }
-        a_total_3(params, b3, reset_wall_delta_t, d2x3, d2a3);
+        a_total_3(params, b3, d2x3, d2a3);
 
         b4 = b;
         for (int j=0; j<params.N; ++j) {
@@ -635,7 +635,7 @@ void simulate_3(const parameters &params, std::vector<ball> &b)
             b4[j].v = b1[j].v + d2x3.col(j)*params.dt;
             b4[j].w = b1[j].w + d2a3(j)*params.dt;
         }
-        a_total_3(params, b4, reset_wall_delta_t, d2x4, d2a4);
+        a_total_3(params, b4, d2x4, d2a4);
 
         ac = (d2x1 + 2*d2x2 + 2*d2x3 + d2x4)/6.0;
         for (int j=0; j<params.N; ++j) {
