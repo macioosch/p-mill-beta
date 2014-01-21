@@ -3,8 +3,8 @@
     --type  1          \
     --dt    1e-7       \
     --tmax  7.0e-1     \
-    --output_lines 1e5 \
-    --e     0.70       \
+    --output_lines 1e6 \
+    --e     1.00       \
     --E     2e11       \
     --G     8e10       \
     --mu_r  0.01       \

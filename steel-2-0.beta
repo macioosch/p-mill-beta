@@ -1,10 +1,10 @@
 #/usr/bin/env bash
 ./p-mill-beta          \
     --type  2          \
-    --dt    1e-5       \
-    --tmax  4e-1       \
+    --dt    1e-7       \
+    --tmax  5e-2       \
     --output_lines 1e3 \
-    --e     0.7        \
+    --e     1.0        \
     --E     2e11       \
     --G     8e10       \
     --mu_r  0.01       \
@@ -12,11 +12,11 @@
     --rho   7.8e3      \
     --rb    5e-3       \
     --vx0   0.1        \
-    --x0    0.010      \
+    --x0    0.001      \
     --y0    0.000      \
     --w0    0e2        \
     --w1    0e2        \
     > output/steel-2.csv
 
+./plot-2.gnuplot
 ./animate-2.py output/steel-2.csv
-#./plot-2.gnuplot
