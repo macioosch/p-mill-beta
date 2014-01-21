@@ -1,8 +1,8 @@
 #/usr/bin/env bash
 time ./p-mill-beta            \
     --type  3                 \
-    --dt    1e-5              \
-    --tmax  5e-1              \
+    --dt    1e-6              \
+    --tmax  1e-2              \
     --output_lines 1e4        \
     --e     0.70              \
     --E     2e11              \

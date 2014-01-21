@@ -253,7 +253,8 @@ Eigen::Matrix2d a_total_2(const parameters &params, const std::vector<ball> &b,
     static const double
             fnc_const = 4/3.*params.Er * sqrt(params.rb),
             fnd_const = 2*params.beta * sqrt(5/3.*params.m*params.Er) * pow(params.rb, 1/4.),
-            ftc_const = -8*params.Gr * sqrt(params.rb),
+            /* Ftc DOESN'T WORK for type 2! Change delta_t to a scalar. */
+            ftc_const = -0*8*params.Gr * sqrt(params.rb),
             ftd_const = 4*params.beta * sqrt(5/3.*params.m*params.Gr) * pow(params.rb, 1/4.);
 
     force << 0, 0;
@@ -480,9 +481,8 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
             t_dir = params.cross_matrix * n_dir;
             vij = b[i].v + (b[i].w*params.rb - params.wc*params.rc)*t_dir;
 
-            // the normal force
-            force_n = (fnc_const * pow(delta_n, 3/2.)
-                    + fnd_const * pow(delta_n, 1/4.) * vij.dot(n_dir)) * n_dir;
+            // normal contact force
+            force_n = fnc_const * pow(delta_n, 3/2.) * n_dir;
 
             // tangential contact force
             delta_t_scalar = 0.0;
@@ -500,14 +500,17 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
                 //reset_wall_delta_t[i] = true;
             }
 
-            acceleration = (force_n + force_t)/params.m;
-            acceleration_matrix.col(i) += acceleration;
-
             // torque
             ri = (params.rb - delta_n) * (-n_dir);
             torque_var = - force_n.norm() * params.mu_r * ri.norm();
             angular_acceleration[i] += (cross2d(ri, force_t)
-                    + torque_var * fsign(b[i].w)) / moment_inertia;
+                    + torque_var * fsign(b[i].w - params.wc)) / moment_inertia;
+
+            // normal damping force
+            force_n += fnd_const * pow(delta_n, 1/4.) * vij.dot(n_dir) * n_dir;
+
+            acceleration = (force_n + force_t)/params.m;
+            acceleration_matrix.col(i) += acceleration;
         }
 
         // forces from other balls
@@ -524,9 +527,8 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
                 ri = (b[j].x - b[i].x) / 2.0;
                 vij = b[j].v - b[i].v - (b[i].w + b[j].w)*ri.norm()*t_dir;
 
-                // the normal force
-                force_n = (fnc_const * pow(delta_n, 3/2.)
-                        - fnd_const * pow(delta_n, 1/4.) * vij.dot(n_dir)) * n_dir;
+                // normal contact force
+                force_n = fnc_const * pow(delta_n, 3/2.) * n_dir;
 
                 // tangential contact force
                 if (b[i].ball_delta_t.find(j) != b[i].ball_delta_t.end())
@@ -543,16 +545,19 @@ void a_total_3(const parameters &params, std::vector<ball> &b,
                     //b[i].ball_delta_t[j].reset = true;
                 }
 
-                acceleration = (force_n + force_t)/params.m;
-                acceleration_matrix.col(i) += acceleration;
-                acceleration_matrix.col(j) -= acceleration;
-
                 // torque
                 torque_var = -force_n.norm() * params.mu_r * ri.norm();
                 angular_acceleration[i] += (cross2d(ri, force_t)
-                        + torque_var * fsign(b[i].w)) / moment_inertia;
+                        + torque_var * fsign(b[i].w - b[j].w)) / moment_inertia;
                 angular_acceleration[j] += (cross2d(ri, force_t)
-                        + torque_var * fsign(b[j].w)) / moment_inertia;
+                        + torque_var * fsign(b[j].w - b[i].w)) / moment_inertia;
+
+                // normal damping force
+                force_n -= fnd_const * pow(delta_n, 1/4.) * vij.dot(n_dir) * n_dir;
+
+                acceleration = (force_n + force_t)/params.m;
+                acceleration_matrix.col(i) += acceleration;
+                acceleration_matrix.col(j) -= acceleration;
             }
         }
     }

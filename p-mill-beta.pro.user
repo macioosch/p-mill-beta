@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.0.0, 2014-01-16T20:55:17. -->
+<!-- Written by QtCreator 3.0.0, 2014-01-21T21:16:19. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -155,7 +155,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">p-mill-beta</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">type 2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/mc/code/qt/p-mill-beta/p-mill-beta.pro</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"> --type 2 --dt 1e-5 --tmax 1e-1 --output_lines 1e3 --e 0.7 --E 2e11 --G 8e10 --mu_r 0.01 --mu_s 0.20 --rho 7.8e3 --rb 5e-3 --vx0 0.1 --x0 0.000 --y0 0.005 --w0 0e2 --w1 0e3</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"> --type 2 --dt 1e-6 --tmax 1e-1 --output_lines 1e3 --e 1.0 --E 2e11 --G 8e10 --mu_r 0.01 --mu_s 0.20 --rho 7.8e3 --rb 5e-3 --vx0 0.1 --x0 0.001 --y0 0.000 --w0 0e2 --w1 0e3</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">p-mill-beta.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseTerminal">false</value>

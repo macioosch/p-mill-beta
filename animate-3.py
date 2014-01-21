@@ -17,9 +17,9 @@ from matplotlib import animation
 from sys import argv
 
 circle_r = 0.005
-container_r = 0.0375
+container_r = 0.050
 
-step = 10
+step = 5
 delta_a = -np.pi/2
 
 t = []
@@ -51,6 +51,10 @@ circle_t = np.linspace(0, 2*np.pi, 32)
 circle_x = circle_r * np.cos(circle_t)
 circle_y = circle_r * np.sin(circle_t)
 
+circle_hd_t = np.linspace(0, 2*np.pi, 128)
+circle_hd_x = circle_r * np.cos(circle_hd_t)
+circle_hd_y = circle_r * np.sin(circle_hd_t)
+
 t = np.array(t)
 x = [ np.array(i) for i in x ]
 y = [ np.array(i) for i in y ]
@@ -71,11 +75,12 @@ ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
 line = []
 for xi, yi, ai in zip(x, y, a):
     plot_track(xi, yi, ai)
-    line_i, = ax.plot([], [], lw=2)
+    line_i, = ax.plot([], [], lw=2, color="black")
     line.append(line_i)
 time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes)
 
-plt.plot(circle_x*container_r/circle_r, circle_y*container_r/circle_r)
+plt.plot(circle_hd_x*container_r/circle_r, circle_hd_y*container_r/circle_r,
+         color="black")
 
 ax.set_xlabel("x [m]")
 ax.set_ylabel("y [m]")

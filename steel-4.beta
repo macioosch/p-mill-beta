@@ -4,7 +4,7 @@
     --dt    1e-5       \
     --tmax  1e-0       \
     --output_lines 1e4 \
-    --e     0.70       \
+    --e     1.00       \
     --E     2e11       \
     --G     8e10       \
     --mu_r  0.01       \

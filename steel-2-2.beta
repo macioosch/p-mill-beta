@@ -1,7 +1,7 @@
 #/usr/bin/env bash
 ./p-mill-beta          \
     --type  2          \
-    --dt    1e-5       \
+    --dt    1e-7       \
     --tmax  1e-1       \
     --output_lines 1e3 \
     --e     0.7        \
@@ -18,5 +18,5 @@
     --w1    0e3        \
     > output/steel-2.csv
 
+./plot-2.gnuplot
 ./animate-2.py output/steel-2.csv
-#./plot-2.gnuplot
