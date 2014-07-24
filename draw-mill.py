@@ -48,18 +48,24 @@ view_limit = 1.1*container_r
 
 # First set up the figure, the axis, and the plot element we want to animate
 fig = plt.figure(figsize=[3,3])
+
 ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
         xlim=(-view_limit, view_limit), ylim=(-view_limit, view_limit))
-line = []
+ax.xaxis.grid(False)
+ax.yaxis.grid(False)
 
-plt.plot(circle_hd_x*container_r/circle_r,
+if len(argv) >= 4:
+    ax.set_frame_on(False)
+    ax.axes.get_xaxis().set_visible(False)
+    ax.axes.get_yaxis().set_visible(False)
+
+ax.plot(circle_hd_x*container_r/circle_r,
          circle_hd_y*container_r/circle_r, color="black")
 for xi, yi, ai in zip(x, y, a):
-    plt.plot(circle_x + xi, circle_y + yi, color="black")
+    ax.plot(circle_x + xi, circle_y + yi, color="black")
 
 ax.set_xlabel("x [cm]")
 ax.set_ylabel("y [cm]")
-plt.grid(False)
 
 if len(argv) >= 3:
     plt.savefig(argv[2], bbox_inches="tight")

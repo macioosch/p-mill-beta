@@ -54,7 +54,7 @@ int parse_cli_opts(int argc, char *argv[], parameters &params) {
 
     po::options_description opt_type3(
                 "Options for type 3 simulation, balls in a container");
-    opt_type2.add_options()
+    opt_type3.add_options()
         ("N", po::value<int>(&(params.N)),
             "number of balls")
         ("Eavg", po::value<double>(&(params.Eavg)),

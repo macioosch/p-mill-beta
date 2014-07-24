@@ -1,21 +1,21 @@
 #/usr/bin/env bash
-time ./p-mill-beta            \
-    --type  3                 \
-    --dt    1e-6              \
-    --tmax  1e-2              \
-    --output_lines 1e4        \
-    --e     0.70              \
-    --E     2e11              \
-    --G     8e10              \
-    --mu_r  0.01              \
-    --mu_s  0.20              \
-    --rho   7.8e3             \
-    --rb    5e-3              \
-    --rc    3.75e-2           \
-    --rs    8.41e-2           \
-    --wc    -31.4159265358979 \
-    --ws    57.1769863        \
-    --N     20                \
+time ./p-mill-beta     \
+    --type  3          \
+    --dt    1e-5       \
+    --tmax  3e-2       \
+    --output_lines 2e3 \
+    --e     0.70       \
+    --E     2e11       \
+    --G     8e10       \
+    --mu_r  0.51       \
+    --mu_s  0.90       \
+    --rho   7.8e3      \
+    --rb    5e-3       \
+    --rc    5e-2       \
+    --rs    15e-2      \
+    --wc    62.7       \
+    --ws    -20.9      \
+    --N     15         \
     > output/steel-3.csv
 
 ./animate-3.py output/steel-3.csv

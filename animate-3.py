@@ -19,7 +19,7 @@ from sys import argv
 circle_r = 0.005
 container_r = 0.050
 
-step = 5
+step = 2
 delta_a = -np.pi/2
 
 t = []
@@ -108,7 +108,7 @@ def animate(i):
     return line + [time_text]
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
-widgets = ['Animating: ', pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA(), ' ']
+widgets = [' Animating: ', pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA(), ' ']
 pbar = pb.ProgressBar(widgets=widgets, maxval=len(t)).start()
 anim = animation.FuncAnimation(fig, animate, init_func=init,
         frames=len(t), interval=1, blit=True)
